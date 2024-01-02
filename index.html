@@ -470,7 +470,7 @@
 
         },
         finnish: {
-            "yesterday-title": "Ei laitetta valittuna. Valitse tai lisää laite yläpuolella olevasta valikosta.",
+            "yesterday-title": "Ei laitetta valittuna. Valitse tai lisää laite yläpuolella olevasta valikosta.1",
             "today-title": "Ei laitetta valittuna. Valitse tai lisää laite yläpuolella olevasta valikosta.",
             "tomorrow-title": "Ei laitetta valittuna. Valitse tai lisää laite yläpuolella olevasta valikosta.",
             "yesterday-menu": "Eilen",
@@ -1476,6 +1476,11 @@
             return prices.length > 0 ? sum / prices.length : 0;
         }
 
+        function calculateNthCheapestPrice(prices, n) {
+            const sortedPrices = [...prices].sort((a, b) => a - b);
+            return sortedPrices[n - 1] || 0;
+        }
+
         // Function to retrieve price data
         async function fetchPriceData(apiKey, countryCode) {
             try {
@@ -1534,7 +1539,7 @@
 
                 return [time, price, power, powerClass];
             });
-            
+
             // Add rows for average prices
             const averagePriceHTML = `
                 <tr>
@@ -1573,6 +1578,7 @@
         }
 
 
+
         function updateData(deviceName) {
             const devices = JSON.parse(localStorage.getItem("devices") || "[]");
             const countryCode = (devices.find(dev => dev.name === deviceName) || {}).country;
@@ -1606,18 +1612,29 @@
                         .filter(([key,]) => key.startsWith(tomorrowStr))
                         .map(([key, value]) => value)
 
-                    const todayAverage = calculateAverage(todayData);
-                    const onHoursData = todayData.filter((_, index) => todayData[index] < trigger || todayData[index] <= thCheapestPrice);
-                    const onHoursAverage = calculateAverage(onHoursData);
+                    // Inside updateData function, after fetching the data
+                    const thCheapestPriceToday = calculateNthCheapestPrice(todayData, hours);
+                    const onHoursDataToday = todayData.filter(price => price < trigger || price <= thCheapestPriceToday);
+                    const onHoursAverageToday = calculateAverage(onHoursDataToday);
+
+                    // Similar calculations for yesterday and tomorrow
+                    const thCheapestPriceYesterday = calculateNthCheapestPrice(yesterdayData, hours);
+                    const onHoursDataYesterday = yesterdayData.filter(price => price < trigger || price <= thCheapestPriceYesterday);
+                    const onHoursAverageYesterday = calculateAverage(onHoursDataYesterday);
+
+                    const thCheapestPriceTomorrow = calculateNthCheapestPrice(tomorrowData, hours);
+                    const onHoursDataTomorrow = tomorrowData.filter(price => price < trigger || price <= thCheapestPriceTomorrow);
+                    const onHoursAverageTomorrow = calculateAverage(onHoursDataTomorrow);
+
 
                     // Update the DOM
                     document.getElementById('yesterday-title').style.display = 'none';
                     document.getElementById('today-title').style.display = 'none';
                     document.getElementById('tomorrow-title').style.display = 'none';
 
-                    document.getElementById("yesterday-data").innerHTML = generateTableHTML(yesterdayData, trigger, hours);
-                    document.getElementById("today-data").innerHTML = generateTableHTML(todayData, trigger, hours, todayAverage, onHoursAverage);
-                    document.getElementById("tomorrow-data").innerHTML = generateTableHTML(tomorrowData, trigger, hours);
+                    document.getElementById("yesterday-data").innerHTML = generateTableHTML(yesterdayData, trigger, hours, calculateAverage(yesterdayData), onHoursAverageYesterday);
+                    document.getElementById("today-data").innerHTML = generateTableHTML(todayData, trigger, hours, calculateAverage(todayData), onHoursAverageToday);
+                    document.getElementById("tomorrow-data").innerHTML = generateTableHTML(tomorrowData, trigger, hours, calculateAverage(tomorrowData), onHoursAverageTomorrow);
                     document.getElementById('yesterday-data').style.display = 'block';
                     document.getElementById('today-data').style.display = 'block';
                     document.getElementById('tomorrow-data').style.display = 'block';
