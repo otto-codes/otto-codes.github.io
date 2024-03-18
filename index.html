@@ -330,24 +330,7 @@
 </div>
 <script>
 
-    document.addEventListener('DOMContentLoaded', () => {
-        const listItems = document.querySelectorAll('#progressbar li');
-        const dateOffsets = [-1, 0, 1];  // Yesterday, today, and tomorrow
-
-        listItems.forEach((li, index) => {
-            if (index < dateOffsets.length) {
-                const date = new Date();
-                date.setDate(date.getDate() + dateOffsets[index]);
-                const day = String(date.getDate());
-                const month = String(date.getMonth() + 1);
-                const formattedDate = `"${day}.${month}"`;  // Quote the string for valid CSS content
-                li.style.setProperty('--date', formattedDate);
-            }
-        });
-    });
-    
-
-    document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function() {
     // Function to hide all fieldsets and then show the selected one
     function showFieldset(fieldsetId) {
         document.querySelectorAll("#fieldsets fieldset").forEach(function(fieldset) {
@@ -360,18 +343,28 @@
     document.getElementById("yesterday-menu").addEventListener("click", function() {
         showFieldset("#fieldsets fieldset:first-child"); // Show the first fieldset
         updateActiveProgress("yesterday-menu");
+        document.getElementById('yesterday-data').style.display = 'block';
+        document.getElementById('today-data').style.display = 'none';
+        document.getElementById('tomorrow-data').style.display = 'none';
     });
 
     // Event listener for the "Today" menu item
     document.getElementById("today-menu").addEventListener("click", function() {
         showFieldset("#fieldsets fieldset:nth-child(2)"); // Show the second fieldset
         updateActiveProgress("today-menu");
+        document.getElementById('yesterday-data').style.display = 'none';
+        document.getElementById('today-data').style.display = 'block';
+        document.getElementById('tomorrow-data').style.display = 'none';
+
     });
 
     // Event listener for the "Tomorrow" menu item
     document.getElementById("tomorrow-menu").addEventListener("click", function() {
         showFieldset("#fieldsets fieldset:last-child"); // Show the last fieldset
         updateActiveProgress("tomorrow-menu");
+        document.getElementById('yesterday-data').style.display = 'none';
+        document.getElementById('today-data').style.display = 'none';
+        document.getElementById('tomorrow-data').style.display = 'block';
     });
 
     // Function to update active class on progress bar items
@@ -387,8 +380,21 @@
     updateActiveProgress("today-menu");
 });
 
+    document.addEventListener('DOMContentLoaded', () => {
+        const listItems = document.querySelectorAll('#progressbar li');
+        const dateOffsets = [-1, 0, 1];  // Yesterday, today, and tomorrow
 
-
+        listItems.forEach((li, index) => {
+            if (index < dateOffsets.length) {
+                const date = new Date();
+                date.setDate(date.getDate() + dateOffsets[index]);
+                const day = String(date.getDate());
+                const month = String(date.getMonth() + 1);
+                const formattedDate = `"${day}.${month}"`;  // Quote the string for valid CSS content
+                li.style.setProperty('--date', formattedDate);
+            }
+        });
+    });
     const translations = {
         english: {
             "yesterday-title": "No device is selected. Select or add a device from above.",
