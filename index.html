@@ -330,108 +330,6 @@
 </div>
 <script>
 
-    var current_fs, next_fs, previous_fs;
-    var animating = false;
-    var xStart = null;
-    let currentFieldsetIndex = 1; // You start at index 1, which is the second fieldset
-
-    // Initialize the "current" fieldset
-    var fieldsets = document.querySelectorAll('fieldset');
-    fieldsets[1].classList.add('current');
-
-    function handleTouchStart(evt) {
-        xStart = evt.touches[0].clientX;
-    }
-
-    function handleTouchMove(evt) {
-        if (!xStart) {
-            return;
-        }
-
-        var xDiff = xStart - evt.touches[0].clientX;
-
-        if (xDiff > 50) {
-            moveFieldset('next');
-            xStart = null;
-        } else if (xDiff < -50) {
-            moveFieldset('previous');
-            xStart = null;
-        }
-    }
-
-    function handleTouchEnd(evt) {
-        xStart = null;
-    }
-
-    // Add touch event listeners
-    document.addEventListener('touchstart', handleTouchStart, false);
-    document.addEventListener('touchmove', handleTouchMove, false);
-    document.addEventListener('touchend', handleTouchEnd, false);
-
-    function moveFieldset(direction) {
-        if (animating) return false;
-        animating = true;
-
-        let fieldsets = document.querySelectorAll('fieldset');
-        let currentFieldset = fieldsets[currentFieldsetIndex];
-        let progressbar = document.getElementById('progressbar');
-        let progressItems = progressbar.querySelectorAll('li');
-
-        // Clear all active statuses from the progress items
-        progressItems.forEach((item) => {
-            item.classList.remove('active');
-        });
-
-        if (direction === 'next' && currentFieldsetIndex < fieldsets.length - 1) {
-            currentFieldset.classList.add('slide-left');
-
-            setTimeout(function () {
-                currentFieldset.style.display = 'none';
-                currentFieldset.classList.remove('slide-left');
-
-                currentFieldsetIndex++;
-                let nextFieldset = fieldsets[currentFieldsetIndex];
-                nextFieldset.style.display = 'block';
-                nextFieldset.classList.add('slide-in-from-right');
-
-                // Set active status on the new current progress item
-                progressItems[currentFieldsetIndex].classList.add('active');
-
-                setTimeout(() => {
-                    nextFieldset.classList.remove('slide-in-from-right');
-                }, 100);
-
-                animating = false;
-            }, 100);
-
-        } else if (direction === 'previous' && currentFieldsetIndex > 0) {
-            currentFieldset.classList.add('slide-right');
-
-            setTimeout(function () {
-                currentFieldset.style.display = 'none';
-                currentFieldset.classList.remove('slide-right');
-
-                currentFieldsetIndex--;
-                let previousFieldset = fieldsets[currentFieldsetIndex];
-                previousFieldset.style.display = 'block';
-                previousFieldset.classList.add('slide-in-from-left');
-
-                // Set active status on the new current progress item
-                progressItems[currentFieldsetIndex].classList.add('active');
-
-                setTimeout(() => {
-                    previousFieldset.classList.remove('slide-in-from-left');
-                }, 100);
-
-                animating = false;
-            }, 100);
-
-        } else {
-            console.log("Either at the first or last step, can't move.");
-            animating = false;
-        }
-    }
-
     document.addEventListener('DOMContentLoaded', () => {
         const listItems = document.querySelectorAll('#progressbar li');
         const dateOffsets = [-1, 0, 1];  // Yesterday, today, and tomorrow
@@ -447,6 +345,46 @@
             }
         });
     });
+    
+    document.addEventListener("DOMContentLoaded", function() {
+    // Function to hide all fieldsets and then show the selected one
+    function showFieldset(fieldsetId) {
+        document.querySelectorAll("#fieldsets fieldset").forEach(function(fieldset) {
+            fieldset.classList.remove("current");
+        });
+        document.querySelector(fieldsetId).classList.add("current");
+    }
+
+    // Event listener for the "Yesterday" menu item
+    document.getElementById("yesterday-menu").addEventListener("click", function() {
+        showFieldset("#fieldsets fieldset:first-child"); // Show the first fieldset
+        updateActiveProgress("yesterday-menu");
+    });
+
+    // Event listener for the "Today" menu item
+    document.getElementById("today-menu").addEventListener("click", function() {
+        showFieldset("#fieldsets fieldset:nth-child(2)"); // Show the second fieldset
+        updateActiveProgress("today-menu");
+    });
+
+    // Event listener for the "Tomorrow" menu item
+    document.getElementById("tomorrow-menu").addEventListener("click", function() {
+        showFieldset("#fieldsets fieldset:last-child"); // Show the last fieldset
+        updateActiveProgress("tomorrow-menu");
+    });
+
+    // Function to update active class on progress bar items
+    function updateActiveProgress(activeMenuId) {
+        document.querySelectorAll("#progressbar li").forEach(function(menuItem) {
+            menuItem.classList.remove("active");
+        });
+        document.getElementById(activeMenuId).classList.add("active");
+    }
+
+    // Initially show the "Today" fieldset
+    showFieldset("#fieldsets fieldset:nth-child(2)"); // You may need to adjust this if your HTML structure changes
+    updateActiveProgress("today-menu");
+});
     const translations = {
         english: {
             "yesterday-title": "No device is selected. Select or add a device from above.",
