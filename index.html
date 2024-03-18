@@ -348,41 +348,30 @@
     
 
     document.addEventListener("DOMContentLoaded", function() {
-    // Function to hide all fieldsets and show only the selected one
-    function showSelectedData(dataId) {
-        // Hide all data containers
-        const dataContainers = document.querySelectorAll("#fieldsets fieldset .data-container");
-        dataContainers.forEach(function(container) {
-            container.style.display = 'none';
+    // Function to hide all fieldsets and then show the selected one
+    function showFieldset(fieldsetId) {
+        document.querySelectorAll("#fieldsets fieldset").forEach(function(fieldset) {
+            fieldset.classList.remove("current");
         });
-
-        // Show the selected data container
-        document.querySelector(dataId).style.display = 'block';
+        document.querySelector(fieldsetId).classList.add("current");
     }
 
-    // Assign event listeners to progress bar items
-    const menuItems = {
-        'yesterday-menu': '#yesterday-data',
-        'today-menu': '#today-data',
-        'tomorrow-menu': '#tomorrow-data'
-    };
+    // Event listener for the "Yesterday" menu item
+    document.getElementById("yesterday-menu").addEventListener("click", function() {
+        showFieldset("#fieldsets fieldset:first-child"); // Show the first fieldset
+        updateActiveProgress("yesterday-menu");
+    });
 
-    Object.keys(menuItems).forEach(function(menuItemId) {
-        document.getElementById(menuItemId).addEventListener('click', function() {
-            // Hide all fieldsets
-            document.querySelectorAll('#fieldsets fieldset').forEach(function(fieldset) {
-                fieldset.classList.remove('current');
-            });
+    // Event listener for the "Today" menu item
+    document.getElementById("today-menu").addEventListener("click", function() {
+        showFieldset("#fieldsets fieldset:nth-child(2)"); // Show the second fieldset
+        updateActiveProgress("today-menu");
+    });
 
-            // Determine which data container to show
-            const dataId = menuItems[menuItemId];
-            const fieldset = document.querySelector(dataId).closest('fieldset');
-            fieldset.classList.add('current'); // Show the fieldset that contains the selected data container
-
-            // Update the display of data containers
-            showSelectedData(dataId);
-            updateActiveProgress(menuItemId); // Highlight the active progress bar item
-        });
+    // Event listener for the "Tomorrow" menu item
+    document.getElementById("tomorrow-menu").addEventListener("click", function() {
+        showFieldset("#fieldsets fieldset:last-child"); // Show the last fieldset
+        updateActiveProgress("tomorrow-menu");
     });
 
     // Function to update active class on progress bar items
@@ -393,9 +382,9 @@
         document.getElementById(activeMenuId).classList.add("active");
     }
 
-    // Initially, hide all data containers and show the 'today-data' by default
-    showSelectedData('#today-data');
-    updateActiveProgress('today-menu');
+    // Initially show the "Today" fieldset
+    showFieldset("#fieldsets fieldset:nth-child(2)"); // You may need to adjust this if your HTML structure changes
+    updateActiveProgress("today-menu");
 });
 
 
