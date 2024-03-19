@@ -322,6 +322,14 @@
 
 </div>
 <script>
+    
+    // Function to update active class on progress bar items
+    function updateActiveProgress(activeMenuId) {
+            document.querySelectorAll("#progressbar li").forEach(function (menuItem) {
+                menuItem.classList.remove("active");
+            });
+            document.getElementById(activeMenuId).classList.add("active");
+        }
 
     document.addEventListener("DOMContentLoaded", function () {
         // Function to hide all fieldsets and then show the selected one
@@ -354,14 +362,6 @@
             document.getElementById('today-data').style.display = 'none';
             document.getElementById('tomorrow-data').style.display = 'block';
         });
-
-        // Function to update active class on progress bar items
-        function updateActiveProgress(activeMenuId) {
-            document.querySelectorAll("#progressbar li").forEach(function (menuItem) {
-                menuItem.classList.remove("active");
-            });
-            document.getElementById(activeMenuId).classList.add("active");
-        }
         document.getElementById('yesterday-data').style.display = 'none';
         document.getElementById('today-data').style.display = 'block';
         document.getElementById('tomorrow-data').style.display = 'none';
@@ -1322,6 +1322,7 @@
                 document.getElementById('yesterday-data').style.display = 'none';
                 document.getElementById('today-data').style.display = 'block';
                 document.getElementById('tomorrow-data').style.display = 'none';
+                updateActiveProgress("today-menu");
 
             }
         });
