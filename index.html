@@ -281,7 +281,6 @@
     <div id="fieldsets">
         <fieldset>
             <div class="data-container">
-                <h3 id="yesterday-title" class="fs-subtitle">No device is selected. Select one from below. </h3>
                 <div id="yesterday-data"></div>
             </div>
         </fieldset>
@@ -293,7 +292,6 @@
         </fieldset>
         <fieldset>
             <div class="data-container">
-                <h3 id="tomorrow-title" class="fs-subtitle">No device is selected. Select one from below. </h3>
                 <div id="tomorrow-data"></div>
             </div>
         </fieldset>
@@ -1261,9 +1259,9 @@
         document.getElementById("yesterday-menu").textContent = translation["yesterday-menu"];
         document.getElementById("today-menu").textContent = translation["today-menu"];
         document.getElementById("tomorrow-menu").textContent = translation["tomorrow-menu"];
-        document.getElementById("yesterday-title").textContent = translation["yesterday-title"];
+        
         document.getElementById("today-title").textContent = translation["today-title"];
-        document.getElementById("tomorrow-title").textContent = translation["tomorrow-title"];
+        
         document.getElementById("device-selection-text").textContent = translation["device-selection-text"];
         document.getElementById("add-device-text").textContent = translation["add-device-text"];
         document.getElementById("device-name-label").textContent = translation["device-name-label"];
@@ -1359,9 +1357,9 @@
             document.getElementById('device-code').value = '';
             deviceSelector.selectedIndex = 0;
             document.getElementById('fieldsets').style.display = 'block';
-            document.getElementById('yesterday-title').style.display = 'block';
+           
             document.getElementById('today-title').style.display = 'block';
-            document.getElementById('tomorrow-title').style.display = 'block';
+            
             document.getElementById('yesterday-data').style.display = 'none';
             document.getElementById('today-data').style.display = 'none';
             document.getElementById('tomorrow-data').style.display = 'none';
@@ -1381,9 +1379,9 @@
                 // Hide the form when the "select device" option is selected
                 document.getElementById('device-form-container').style.display = 'none';
                 document.getElementById('fieldsets').style.display = 'block';
-                document.getElementById('yesterday-title').style.display = 'block';
+                
                 document.getElementById('today-title').style.display = 'block';
-                document.getElementById('tomorrow-title').style.display = 'block';
+              
                 document.getElementById('yesterday-data').style.display = 'none';
                 document.getElementById('today-data').style.display = 'none';
                 document.getElementById('tomorrow-data').style.display = 'none';
@@ -1398,12 +1396,12 @@
                 handleDeviceSubmission(this.options[this.selectedIndex].text, this.value);
                 document.getElementById('device-form-container').style.display = 'none';
                 document.getElementById('fieldsets').style.display = 'block';
-                document.getElementById('yesterday-title').style.display = 'none';
+                
                 document.getElementById('today-title').style.display = 'none';
-                document.getElementById('tomorrow-title').style.display = 'none';
-                document.getElementById('yesterday-data').style.display = 'block';
+                
+                document.getElementById('yesterday-data').style.display = 'none';
                 document.getElementById('today-data').style.display = 'block';
-                document.getElementById('tomorrow-data').style.display = 'block';
+                document.getElementById('tomorrow-data').style.display = 'none';
 
             }
         });
@@ -1565,16 +1563,12 @@
 
 
                     // Update the DOM
-                    document.getElementById('yesterday-title').style.display = 'none';
                     document.getElementById('today-title').style.display = 'none';
-                    document.getElementById('tomorrow-title').style.display = 'none';
 
                     document.getElementById("yesterday-data").innerHTML = generateTableHTML(yesterdayData, trigger, hours, calculateAverage(yesterdayData), onHoursAverageYesterday);
                     document.getElementById("today-data").innerHTML = generateTableHTML(todayData, trigger, hours, calculateAverage(todayData), onHoursAverageToday);
                     document.getElementById("tomorrow-data").innerHTML = generateTableHTML(tomorrowData, trigger, hours, calculateAverage(tomorrowData), onHoursAverageTomorrow);
-                    document.getElementById('yesterday-data').style.display = 'block';
-                    document.getElementById('today-data').style.display = 'block';
-                    document.getElementById('tomorrow-data').style.display = 'block';
+
                 }
             });
         }
