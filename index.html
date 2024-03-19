@@ -390,8 +390,14 @@
             "price": "Price",
             "power": "Power",
             "on": "On",
-            "off": "Off"
-
+            "off": "Off",
+            "last-price-fetch-today-at": "Last price fetch today at ",
+            "last-price-fetch-yesterday-at": "Last price fetch yesterday at ",
+            "last-price-fetch-yesterday": "Last price fetch yesterday ",
+            "last-price-fetch-today": "Last price fetch today.",
+            "Last-price-fetch": "Last price fetch ",
+            "days-ago": "-days ago"
+            
         },
         finnish: {
             "title": "Ei laitetta valittuna. Valitse tai lisää laite yläpuolella olevasta valikosta.",
@@ -409,7 +415,8 @@
             "price": "Hinta",
             "power": "Virta",
             "on": "Päällä",
-            "off": "Pois"
+            "off": "Pois",
+            "last-price-fetch-today": "Viimeisin hinta haettu tänään."
         },
         french: {
             "title": "Aucun appareil n'est sélectionné. Sélectionnez ou ajoutez un appareil ci-dessus.",
@@ -1373,9 +1380,12 @@
 
             let relativeDateString;
 
+            const selectedLanguage = getBrowserLanguage();
+            const translation = translations[selectedLanguage];
+
             if (daysDiff === 0) {
                 // Today
-                relativeDateString = hour !== null ? `Last price fetch today at ${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}.` : "Last price fetch today";
+                relativeDateString = hour !== null ? `Last price fetch today at ${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}.` : translation["last-price-fetch-today"];
             } else if (daysDiff === 1) {
                 // Yesterday
                 relativeDateString = hour !== null ? `Last price fetch yesterday at ${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}.` : "Last price fetch yesterday";
