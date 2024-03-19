@@ -1227,11 +1227,11 @@
                 if (existingDevice) {
                     if (deviceName)
                         existingDevice.name = deviceName;
-                        existingDevice.country = data.country;
-                        existingDevice.timestamp = data.timestamp;
-                        existingDevice.hoursactive = data.hoursactive;
-                        existingDevice.kwhtrigger = data.kwhtrigger;
-                        existingDevice.selected = true;
+                    existingDevice.country = data.country;
+                    existingDevice.timestamp = data.timestamp;
+                    existingDevice.hoursactive = data.hoursactive;
+                    existingDevice.kwhtrigger = data.kwhtrigger;
+                    existingDevice.selected = true;
                 } else {
                     const newDevice = {
                         name: deviceName || "Unnamed Device",
@@ -1350,6 +1350,43 @@
             return `${yyyy}${mm}${dd}`;
         }
 
+        function formatRelativeTime(timestamp) {
+            // Parse the timestamp
+            const year = parseInt(timestamp.substring(0, 4), 10);
+            const month = parseInt(timestamp.substring(4, 6), 10) - 1; // JS months are 0-indexed
+            const day = parseInt(timestamp.substring(6, 8), 10);
+            const hour = timestamp.length > 8 ? parseInt(timestamp.substring(8, 10), 10) : null;
+            const minute = timestamp.length > 10 ? parseInt(timestamp.substring(10, 12), 10) : null;
+
+            // Create date object from timestamp
+            const timestampDate = hour !== null ? new Date(year, month, day, hour, minute) : new Date(year, month, day);
+
+            // Get current date and reset hours for accurate day comparison
+            const currentDate = new Date();
+            const today = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+
+            // Compare dates
+            const timestampDay = new Date(year, month, day);
+            const daysDiff = Math.round((today - timestampDay) / (1000 * 60 * 60 * 24));
+
+            let relativeDateString;
+
+            if (daysDiff === 0) {
+                // Today
+                relativeDateString = hour !== null ? `Last price fetch today at ${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}.` : "Last price fetch today";
+            } else if (daysDiff === 1) {
+                // Yesterday
+                relativeDateString = hour !== null ? `Last price fetch yesterday at ${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}.` : "Last price fetch yesterday";
+            } else {
+                // More than one day ago
+                relativeDateString = `Last price fetch ${daysDiff}-days ago`;
+            }
+
+            return relativeDateString;
+        }
+
         // Function to generate the table HTML
         function generateTableHTML(prices, kwhTrigger, cheapestHours, dayAverage, onHoursAverage, timestamp) {
 
@@ -1394,7 +1431,7 @@
                     </tr>
                     <tr>
                         <td>Status</td>
-                        <td>${timestamp}</td>
+                        <td>${formatRelativeTime(timestamp)}</td>
                         <td></td>
                     </tr>
                     <tr>
