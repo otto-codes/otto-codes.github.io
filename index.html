@@ -325,46 +325,49 @@
 </div>
 <script>
 
-document.addEventListener("DOMContentLoaded", function() {
-    // Function to hide all fieldsets and then show the selected one
-   
+    document.addEventListener("DOMContentLoaded", function () {
+        // Function to hide all fieldsets and then show the selected one
 
-    // Event listener for the "Yesterday" menu item
-    document.getElementById("yesterday-menu").addEventListener("click", function() {
-        
-        updateActiveProgress("yesterday-menu");
-        document.getElementById('yesterday-data').style.display = 'block';
-        document.getElementById('today-data').style.display = 'none';
-        document.getElementById('tomorrow-data').style.display = 'none';
-    });
 
-    // Event listener for the "Today" menu item
-    document.getElementById("today-menu").addEventListener("click", function() {
-        
-        updateActiveProgress("today-menu");
+        // Event listener for the "Yesterday" menu item
+        document.getElementById("yesterday-menu").addEventListener("click", function () {
+
+            updateActiveProgress("yesterday-menu");
+            document.getElementById('yesterday-data').style.display = 'block';
+            document.getElementById('today-data').style.display = 'none';
+            document.getElementById('tomorrow-data').style.display = 'none';
+        });
+
+        // Event listener for the "Today" menu item
+        document.getElementById("today-menu").addEventListener("click", function () {
+
+            updateActiveProgress("today-menu");
+            document.getElementById('yesterday-data').style.display = 'none';
+            document.getElementById('today-data').style.display = 'block';
+            document.getElementById('tomorrow-data').style.display = 'none';
+
+        });
+
+        // Event listener for the "Tomorrow" menu item
+        document.getElementById("tomorrow-menu").addEventListener("click", function () {
+
+            updateActiveProgress("tomorrow-menu");
+            document.getElementById('yesterday-data').style.display = 'none';
+            document.getElementById('today-data').style.display = 'none';
+            document.getElementById('tomorrow-data').style.display = 'block';
+        });
+
+        // Function to update active class on progress bar items
+        function updateActiveProgress(activeMenuId) {
+            document.querySelectorAll("#progressbar li").forEach(function (menuItem) {
+                menuItem.classList.remove("active");
+            });
+            document.getElementById(activeMenuId).classList.add("active");
+        }
         document.getElementById('yesterday-data').style.display = 'none';
         document.getElementById('today-data').style.display = 'block';
         document.getElementById('tomorrow-data').style.display = 'none';
-
     });
-
-    // Event listener for the "Tomorrow" menu item
-    document.getElementById("tomorrow-menu").addEventListener("click", function() {
-       
-        updateActiveProgress("tomorrow-menu");
-        document.getElementById('yesterday-data').style.display = 'none';
-        document.getElementById('today-data').style.display = 'none';
-        document.getElementById('tomorrow-data').style.display = 'block';
-    });
-
-    // Function to update active class on progress bar items
-    function updateActiveProgress(activeMenuId) {
-        document.querySelectorAll("#progressbar li").forEach(function(menuItem) {
-            menuItem.classList.remove("active");
-        });
-        document.getElementById(activeMenuId).classList.add("active");
-    }
-});
 
     document.addEventListener('DOMContentLoaded', () => {
         const listItems = document.querySelectorAll('#progressbar li');
