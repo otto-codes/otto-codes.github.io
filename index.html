@@ -332,16 +332,11 @@
 
 document.addEventListener("DOMContentLoaded", function() {
     // Function to hide all fieldsets and then show the selected one
-    function showFieldset(fieldsetId) {
-        document.querySelectorAll("#fieldsets fieldset").forEach(function(fieldset) {
-            fieldset.classList.remove("current");
-        });
-        document.querySelector(fieldsetId).classList.add("current");
-    }
+   
 
     // Event listener for the "Yesterday" menu item
     document.getElementById("yesterday-menu").addEventListener("click", function() {
-        showFieldset("#fieldsets fieldset:first-child"); // Show the first fieldset
+        
         updateActiveProgress("yesterday-menu");
         document.getElementById('yesterday-data').style.display = 'block';
         document.getElementById('today-data').style.display = 'none';
@@ -350,7 +345,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Event listener for the "Today" menu item
     document.getElementById("today-menu").addEventListener("click", function() {
-        showFieldset("#fieldsets fieldset:nth-child(2)"); // Show the second fieldset
+        
         updateActiveProgress("today-menu");
         document.getElementById('yesterday-data').style.display = 'none';
         document.getElementById('today-data').style.display = 'block';
@@ -360,7 +355,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Event listener for the "Tomorrow" menu item
     document.getElementById("tomorrow-menu").addEventListener("click", function() {
-        showFieldset("#fieldsets fieldset:last-child"); // Show the last fieldset
+       
         updateActiveProgress("tomorrow-menu");
         document.getElementById('yesterday-data').style.display = 'none';
         document.getElementById('today-data').style.display = 'none';
