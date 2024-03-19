@@ -313,14 +313,14 @@
     </ul>
 </div>
 <script>
-    
+
     // Function to update active class on progress bar items
     function updateActiveProgress(activeMenuId) {
-            document.querySelectorAll("#progressbar li").forEach(function (menuItem) {
-                menuItem.classList.remove("active");
-            });
-            document.getElementById(activeMenuId).classList.add("active");
-        }
+        document.querySelectorAll("#progressbar li").forEach(function (menuItem) {
+            menuItem.classList.remove("active");
+        });
+        document.getElementById(activeMenuId).classList.add("active");
+    }
 
     document.addEventListener("DOMContentLoaded", function () {
         // Function to hide all fieldsets and then show the selected one
@@ -1170,9 +1170,9 @@
         document.getElementById("yesterday-menu").textContent = translation["yesterday-menu"];
         document.getElementById("today-menu").textContent = translation["today-menu"];
         document.getElementById("tomorrow-menu").textContent = translation["tomorrow-menu"];
-        
+
         document.getElementById("title").textContent = translation["title"];
-        
+
         document.getElementById("device-selection-text").textContent = translation["device-selection-text"];
         document.getElementById("add-device-text").textContent = translation["add-device-text"];
         document.getElementById("device-name-label").textContent = translation["device-name-label"];
@@ -1268,9 +1268,9 @@
             document.getElementById('device-code').value = '';
             deviceSelector.selectedIndex = 0;
             document.getElementById('fieldsets').style.display = 'block';
-           
+
             document.getElementById('title').style.display = 'block';
-            
+
             document.getElementById('yesterday-data').style.display = 'none';
             document.getElementById('today-data').style.display = 'none';
             document.getElementById('tomorrow-data').style.display = 'none';
@@ -1291,9 +1291,9 @@
                 // Hide the form when the "select device" option is selected
                 document.getElementById('device-form-container').style.display = 'none';
                 document.getElementById('fieldsets').style.display = 'none';
-                
+
                 document.getElementById('title').style.display = 'block';
-              
+
                 document.getElementById('yesterday-data').style.display = 'none';
                 document.getElementById('today-data').style.display = 'none';
                 document.getElementById('tomorrow-data').style.display = 'none';
@@ -1308,9 +1308,9 @@
                 handleDeviceSubmission(this.options[this.selectedIndex].text, this.value);
                 document.getElementById('device-form-container').style.display = 'none';
                 document.getElementById('fieldsets').style.display = 'block';
-                
+
                 document.getElementById('title').style.display = 'none';
-                
+
                 document.getElementById('yesterday-data').style.display = 'none';
                 document.getElementById('today-data').style.display = 'block';
                 document.getElementById('tomorrow-data').style.display = 'none';
@@ -1390,14 +1390,16 @@
 
             // Add rows for average prices
             const averagePriceHTML = `
-                <tr>
-                    <td colspan="2">Average Price for Day</td>
-                    <td>${dayAverage.toFixed(2)}</td>
-                </tr>
-                <tr>
-                    <td colspan="2">Average Price for ON Hours</td>
-                    <td>${onHoursAverage.toFixed(2)}</td>
-                </tr>
+                <table>
+                    <tr>
+                        <td colspan="2">Average price</td>
+                        <td>${dayAverage.toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Your average price</td>
+                        <td>${onHoursAverage.toFixed(2)}</td>
+                    </tr>
+                </table>
             `;
 
             const tableHTML = `
