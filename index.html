@@ -276,7 +276,7 @@
             <option id="add-device-text" value="add-device">Add Device</option>
         </select>
     </div>
-
+    <h3 id="title" class="fs-subtitle">No device is selected. Select one from below. </h3>
     <!-- fieldsets -->
     <div id="fieldsets">
         <fieldset>
@@ -286,7 +286,6 @@
         </fieldset>
         <fieldset class="current">
             <div class="data-container">
-                <h3 id="title" class="fs-subtitle">No device is selected. Select one from below. </h3>
                 <div id="today-data"></div>
             </div>
         </fieldset>
@@ -1294,11 +1293,12 @@
                 document.getElementById('yesterday-data').style.display = 'none';
                 document.getElementById('today-data').style.display = 'none';
                 document.getElementById('tomorrow-data').style.display = 'none';
+                document.getElementById('title').style.display = 'none';
             }
             else if (this.value === "default") {
                 // Hide the form when the "select device" option is selected
                 document.getElementById('device-form-container').style.display = 'none';
-                document.getElementById('fieldsets').style.display = 'block';
+                document.getElementById('fieldsets').style.display = 'none';
                 
                 document.getElementById('title').style.display = 'block';
               
