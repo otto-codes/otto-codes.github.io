@@ -1388,16 +1388,23 @@
                 return [time, price, power, powerClass];
             });
 
+            // Calculate the discount percentage
+            const discountPercentage = ((dayAverage - onHoursAverage) / dayAverage) * 100;
+
             // Add rows for average prices
             const averagePriceHTML = `
                 <table>
                     <tr>
-                        <td colspan="2">Average price</td>
+                        <td>Daily average price</td>
                         <td>${dayAverage.toFixed(2)}</td>
                     </tr>
                     <tr>
-                        <td colspan="2">Your average price</td>
+                        <td>Your average price</td>
                         <td>${onHoursAverage.toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                        <td>Your savings</td>
+                        <td>${discountPercentage.toFixed(2)}%</td>
                     </tr>
                 </table>
             `;
