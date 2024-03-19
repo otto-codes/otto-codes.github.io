@@ -1227,11 +1227,11 @@
                 if (existingDevice) {
                     if (deviceName)
                         existingDevice.name = deviceName;
-                    existingDevice.country = data.country;
-                    existingDevice.timestamp = data.timestamp;
-                    existingDevice.hoursactive = data.hoursactive;
-                    existingDevice.kwhtrigger = data.kwhtrigger;
-                    existingDevice.selected = true;
+                        existingDevice.country = data.country;
+                        existingDevice.timestamp = data.timestamp;
+                        existingDevice.hoursactive = data.hoursactive;
+                        existingDevice.kwhtrigger = data.kwhtrigger;
+                        existingDevice.selected = true;
                 } else {
                     const newDevice = {
                         name: deviceName || "Unnamed Device",
@@ -1291,9 +1291,7 @@
                 // Hide the form when the "select device" option is selected
                 document.getElementById('device-form-container').style.display = 'none';
                 document.getElementById('fieldsets').style.display = 'none';
-
                 document.getElementById('title').style.display = 'block';
-
                 document.getElementById('yesterday-data').style.display = 'none';
                 document.getElementById('today-data').style.display = 'none';
                 document.getElementById('tomorrow-data').style.display = 'none';
@@ -1304,13 +1302,10 @@
 
                 console.log("apikey: " + this.value);
                 console.log("device name: " + this.options[this.selectedIndex].text)
-
                 handleDeviceSubmission(this.options[this.selectedIndex].text, this.value);
                 document.getElementById('device-form-container').style.display = 'none';
                 document.getElementById('fieldsets').style.display = 'block';
-
                 document.getElementById('title').style.display = 'none';
-
                 document.getElementById('yesterday-data').style.display = 'none';
                 document.getElementById('today-data').style.display = 'block';
                 document.getElementById('tomorrow-data').style.display = 'none';
@@ -1356,7 +1351,7 @@
         }
 
         // Function to generate the table HTML
-        function generateTableHTML(prices, kwhTrigger, cheapestHours, dayAverage, onHoursAverage) {
+        function generateTableHTML(prices, kwhTrigger, cheapestHours, dayAverage, onHoursAverage, timestamp) {
 
             const selectedLanguage = getBrowserLanguage();
             const translation = translations[selectedLanguage];
@@ -1395,6 +1390,14 @@
             const averagePriceHTML = `
                 <table>
                     <tr>
+                        <th>Device info</th>
+                    </tr>
+                    <tr>
+                        <td>Status</td>
+                        <td>${timestamp.toFixed(2)}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
                         <td>Daily average price</td>
                         <td>${dayAverage.toFixed(2)}</td>
                         <td></td>
@@ -1414,6 +1417,7 @@
 
             const tableHTML = `
                     ${averagePriceHTML}
+                    </br>
                     </br>
                     </br>
                     <table>
@@ -1447,6 +1451,7 @@
             const apiKey = (devices.find(dev => dev.name === deviceName) || {}).code;
             const trigger = (devices.find(dev => dev.name === deviceName) || {}).kwhtrigger;
             const hours = (devices.find(dev => dev.name === deviceName) || {}).hoursactive;
+            const timestamp = (devices.find(dev => dev.name === deviceName) || {}).timestamp;
 
             fetchPriceData(apiKey, countryCode).then(data => {
                 if (data) {
@@ -1492,9 +1497,9 @@
                     // Update the DOM
                     document.getElementById('title').style.display = 'none';
 
-                    document.getElementById("yesterday-data").innerHTML = generateTableHTML(yesterdayData, trigger, hours, calculateAverage(yesterdayData), onHoursAverageYesterday);
-                    document.getElementById("today-data").innerHTML = generateTableHTML(todayData, trigger, hours, calculateAverage(todayData), onHoursAverageToday);
-                    document.getElementById("tomorrow-data").innerHTML = generateTableHTML(tomorrowData, trigger, hours, calculateAverage(tomorrowData), onHoursAverageTomorrow);
+                    document.getElementById("yesterday-data").innerHTML = generateTableHTML(yesterdayData, trigger, hours, calculateAverage(yesterdayData), onHoursAverageYesterday, timestamp);
+                    document.getElementById("today-data").innerHTML = generateTableHTML(todayData, trigger, hours, calculateAverage(todayData), onHoursAverageToday, timestamp);
+                    document.getElementById("tomorrow-data").innerHTML = generateTableHTML(tomorrowData, trigger, hours, calculateAverage(tomorrowData), onHoursAverageTomorrow, timestamp);
 
                 }
             });
