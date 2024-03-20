@@ -397,8 +397,10 @@
             "yesterday": "yesterday.",
             "last-price-fetch": "Last price fetch ",
             "days-ago": "-days ago",
-            "days-ago-at": "-days ago at "
-
+            "days-ago-at": "-days ago at ",
+            "daily-average-price": "Daily average price",
+            "your-average-price": "Your average price",
+            "your-savings": "Your savings"
 
         },
         finnish: {
@@ -424,7 +426,10 @@
             "yesterday": "Eilen.",
             "last-price-fetch": "Viimeisin hinta haettu ",
             "days-ago": "-päivää sitten",
-            "days-ago-at": "-päivää sitten klo. "
+            "days-ago-at": "-päivää sitten klo. ",
+            "daily-average-price": "Päivän keskihinta",
+            "your-average-price": "Sinun keskihintasi",
+            "your-savings": "Säästösi"
 
         },
         french: {
@@ -1395,10 +1400,10 @@
 
             if (daysDiff === 0) {
                 // Today
-                relativeDateString = hour !== null ? `${translation["today-at"]}${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}.` : translation["today"];
+                relativeDateString = hour !== null ? `${translation["today-at"]}${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}` : translation["today"];
             } else if (daysDiff === 1) {
                 // Yesterday
-                relativeDateString = hour !== null ? `${translation["yesterday-at"]}${hour.toString().padStart(2, '0')}:${minute ? minute.toString().padStart(2, '0') : '00'}.` : translation["yesterday"];
+                relativeDateString = hour !== null ? `${translation["yesterday-at"]}${hour.toString().padStart(2, '0')}:${minute ? minute.toString().padStart(2, '0') : '00'}` : translation["yesterday"];
             } else {
                 // More than one day ago
                 relativeDateString = `${daysDiff}${translation["days-ago"]}`;
@@ -1455,17 +1460,17 @@
                         <td></td>
                     </tr>
                     <tr>
-                        <td>Daily average price</td>
+                        <td>${translation["daily-average-price"]}</td>
                         <td>${dayAverage.toFixed(2)}</td>
                         <td></td>
                     </tr>
                     <tr>
-                        <td>Your average price</td>
+                        <td>${translation["your-average-price"]}</td>
                         <td>${onHoursAverage.toFixed(2)}</td>
                         <td></td>
                     </tr>
                     <tr>
-                        <td>Your savings</td>
+                        <td>${translation["your-savings"]}</td>
                         <td>${discountPercentage.toFixed(2)}%</td>
                         <td></td>
                     </tr>
