@@ -400,7 +400,8 @@
             "days-ago-at": "-days ago at ",
             "daily-average-price": "Daily average price",
             "your-average-price": "Your average price",
-            "your-savings": "Your savings"
+            "your-savings": "Your savings",
+            "device-info": "Device info"
 
         },
         finnish: {
@@ -429,7 +430,8 @@
             "days-ago-at": "-päivää sitten klo. ",
             "daily-average-price": "Päivän keskihinta",
             "your-average-price": "Sinun keskihintasi",
-            "your-savings": "Säästösi"
+            "your-savings": "Säästösi",
+            "device-info": "Device info"
 
         },
         french: {
@@ -1449,10 +1451,10 @@
             const discountPercentage = ((dayAverage - onHoursAverage) / dayAverage) * 100;
 
             // Add rows for average prices
-            const averagePriceHTML = `
+            const deviceInfoHTML = `
                 <table>
                     <tr>
-                        <th>Device info</th>
+                        <th>${translation["device-info"]}</th>
                     </tr>
                     <tr>
                         <td>${translation["last-price-fetch"]}</td>
@@ -1478,7 +1480,6 @@
             `;
 
             const tableHTML = `
-                    ${averagePriceHTML}
                     </br>
                     </br>
                     </br>
@@ -1500,6 +1501,7 @@
                             `).join('')}
                         </tbody>
                     </table>
+                    ${deviceInfoHTML}
                 `;
 
             return tableHTML;
