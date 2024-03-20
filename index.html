@@ -399,7 +399,7 @@
             "days-ago": "-days ago",
             "days-ago-at": "-days ago at "
 
-            
+
         },
         finnish: {
             "title": "Ei laitetta valittuna. Valitse tai lisää laite yläpuolella olevasta valikosta.",
@@ -418,7 +418,7 @@
             "power": "Virta",
             "on": "Päällä",
             "off": "Pois",
-            "today": "Viimeisin hinta haettu tänään",
+            "today": "Tänään",
             "today-at": "Tänään klo ",
             "yesterday-at": "Eilen klo. ",
             "yesterday": "Eilen.",
@@ -1371,11 +1371,12 @@
             const year = parseInt(timestamp.substring(0, 4), 10);
             const month = parseInt(timestamp.substring(4, 6), 10) - 1; // JS months are 0-indexed
             const day = parseInt(timestamp.substring(6, 8), 10);
-            const hour = timestamp.length > 8 ? parseInt(timestamp.substring(8, 10), 10) : null;
-            const minute = timestamp.length > 10 ? parseInt(timestamp.substring(10, 12), 10) : null;
+            const hour = timestamp.length >= 10 ? parseInt(timestamp.substring(8, 10), 10) : null;
+            // Set minutes to "00" if the timestamp includes hours but no minutes
+            const minute = timestamp.length === 12 ? parseInt(timestamp.substring(10, 12), 10) : (timestamp.length === 10 ? 0 : null);
 
             // Create date object from timestamp
-            const timestampDate = hour !== null ? new Date(year, month, day, hour, minute) : new Date(year, month, day);
+            const timestampDate = new Date(year, month, day, hour ?? 0, minute ?? 0);
 
             // Get current date and reset hours for accurate day comparison
             const currentDate = new Date();
@@ -1397,7 +1398,7 @@
                 relativeDateString = hour !== null ? `${translation["today-at"]}${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}.` : translation["today"];
             } else if (daysDiff === 1) {
                 // Yesterday
-                relativeDateString = hour !== null ? `${translation["yesterday-at"]}${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}.` : translation["yesterday"];
+                relativeDateString = hour !== null ? `${translation["yesterday-at"]}${hour.toString().padStart(2, '0')}:${minute ? minute.toString().padStart(2, '0') : '00'}.` : translation["yesterday"];
             } else {
                 // More than one day ago
                 relativeDateString = `${daysDiff}${translation["days-ago"]}`;
