@@ -266,15 +266,31 @@
 
         .device-data-card {
             background-color: #f9f9f9;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            /* increased padding */
             margin: 20px auto;
-            max-width: 400px;
+            max-width: 500px;
+            /* increased width */
+            transition: transform 0.3s ease-in-out;
+            /* smooth transition for hover effect */
+        }
+
+        .device-data-card:hover {
+            transform: scale(1.05);
+            /* subtle zoom effect on hover */
         }
 
         .device-data-card>div {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            /* increased spacing */
+            padding: 10px;
+            /* added padding for each section */
+            background: #ffffff;
+            /* different background for each section */
+            border-radius: 5px;
+            /* rounded corners for sections */
         }
 
         .device-data-card>div:last-child {
@@ -282,26 +298,45 @@
         }
 
         .device-data-card span {
-            font-weight: bold;
+            font-weight: 600;
+            /* bolder font for emphasis */
+            font-size: 1.1em;
+            /* larger font size */
+            display: inline-block;
+            /* block level allows for more control */
+            margin-left: 5px;
+            /* spacing between label and value */
         }
 
         .device-info {
-            font-size: 1.2em;
+            font-size: 1.4em;
+            /* increased size for device info */
             color: #333;
+            font-weight: 700;
+            /* make it bolder */
+            margin-bottom: 25px;
+            /* extra spacing */
         }
 
         .last-price-fetch,
         .daily-average-price,
         .your-average-price,
         .your-savings {
-            color: #666;
-            font-size: 0.95em;
+            color: #333;
+            /* darker font color for better readability */
+            font-size: 1.2em;
+            /* larger font size */
+            background: #f0f0f0;
+            /* light grey background for sections */
         }
 
         .your-savings span {
             color: #4CAF50;
-            /* Change to reflect significance */
+            /* keep the savings in green for visual emphasis */
+            font-size: 1.3em;
+            /* slightly larger font for savings value */
         }
+
 
     }
 </style>
@@ -471,7 +506,7 @@
             "daily-average-price": "Päivän keskihinta",
             "your-average-price": "Sinun keskihintasi",
             "your-savings": "Säästösi",
-            "device-info": "Device info"
+            "device-info": "Laitteen tiedot"
 
         },
         french: {
