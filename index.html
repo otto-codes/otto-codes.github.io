@@ -391,12 +391,14 @@
             "power": "Power",
             "on": "On",
             "off": "Off",
-            "last-price-fetch-today-at": "Last price fetch today at ",
-            "last-price-fetch-yesterday-at": "Last price fetch yesterday at ",
-            "last-price-fetch-yesterday": "Last price fetch yesterday ",
-            "last-price-fetch-today": "Last price fetch today.",
-            "Last-price-fetch": "Last price fetch ",
-            "days-ago": "-days ago"
+            "today-at": "today at ",
+            "today": "today.",
+            "yesterday-at": "yesterday at ",
+            "yesterday": "yesterday.",
+            "last-price-fetch": "Last price fetch ",
+            "days-ago": "-days ago",
+            "days-ago-at": "-days ago at "
+
             
         },
         finnish: {
@@ -416,7 +418,14 @@
             "power": "Virta",
             "on": "Päällä",
             "off": "Pois",
-            "last-price-fetch-today": "Viimeisin hinta haettu tänään."
+            "today": "Viimeisin hinta haettu tänään",
+            "today-at": "Tänään klo ",
+            "yesterday-at": "Eilen klo. ",
+            "yesterday": "Eilen.",
+            "last-price-fetch": "Viimeisin hinta haettu ",
+            "days-ago": "-päivää sitten",
+            "days-ago-at": "-päivää sitten klo. "
+
         },
         french: {
             "title": "Aucun appareil n'est sélectionné. Sélectionnez ou ajoutez un appareil ci-dessus.",
@@ -1385,13 +1394,13 @@
 
             if (daysDiff === 0) {
                 // Today
-                relativeDateString = hour !== null ? `Last price fetch today at ${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}.` : translation["last-price-fetch-today"];
+                relativeDateString = hour !== null ? `${translation["today-at"]}${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}.` : translation["today"];
             } else if (daysDiff === 1) {
                 // Yesterday
-                relativeDateString = hour !== null ? `Last price fetch yesterday at ${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}.` : "Last price fetch yesterday";
+                relativeDateString = hour !== null ? `${translation["yesterday-at"]}${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}.` : translation["yesterday"];
             } else {
                 // More than one day ago
-                relativeDateString = `Last price fetch ${daysDiff}-days ago`;
+                relativeDateString = `${daysDiff}${translation["days-ago"]}`;
             }
 
             return relativeDateString;
@@ -1440,7 +1449,7 @@
                         <th>Device info</th>
                     </tr>
                     <tr>
-                        <td>Status</td>
+                        <td>${translation["last-price-fetch"]}</td>
                         <td>${formatRelativeTime(timestamp)}</td>
                         <td></td>
                     </tr>
