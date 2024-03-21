@@ -507,7 +507,7 @@
             "your-average-price": "Sinun keskihintasi",
             "your-savings": "Säästösi",
             "device-info": "Laitteen tiedot",
-            "come-back-later": "Hinnat julkaistaan Nordpool sähköpörssin sulkeuduttua tänään klo. 14."
+            "come-back-later": "Hinnat julkaistaan tänään klo. 14:00 Nordpool sähköpörssin sulkeuduttua."
         },
         french: {
             "title": "Aucun appareil n'est sélectionné. Sélectionnez ou ajoutez un appareil ci-dessus.",
@@ -1574,7 +1574,7 @@
 
                     document.getElementById("yesterday-data").innerHTML = generateTableHTML(yesterdayData, trigger, hours, calculateAverage(yesterdayData), onHoursAverageYesterday, timestamp);
                     document.getElementById("today-data").innerHTML = generateTableHTML(todayData, trigger, hours, calculateAverage(todayData), onHoursAverageToday, timestamp);
-                    if (13 < today.getUTCHours()){
+                    if (12 < today.getUTCHours()){
                         document.getElementById("tomorrow-data").innerHTML = generateTableHTML(tomorrowData, trigger, hours, calculateAverage(tomorrowData), onHoursAverageTomorrow, timestamp);
                     }
                     else{
