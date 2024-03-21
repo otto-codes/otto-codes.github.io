@@ -506,61 +506,6 @@
             "your-average-price": "Sinun keskihintasi",
             "your-savings": "Säästösi",
             "device-info": "Laitteen tiedot"
-
-        },
-        french: {
-            "title": "Aucun appareil n'est sélectionné. Sélectionnez ou ajoutez un appareil ci-dessus.",
-            "yesterday-menu": "Hier",
-            "today-menu": "Aujourd'hui",
-            "tomorrow-menu": "Demain",
-            "device-selection-text": "Sélectionner un appareil",
-            "add-device-text": "Ajouter un appareil",
-            "device-name-label": "Nommez votre appareil",
-            "device-name-prefilled": "Radiateur de cuisine",
-            "device-code-label": "Code de l'appareil:",
-            "cancel-device": "Annuler",
-            "submit-device": "Enregistrer",
-            "time": "Temps",
-            "price": "Prix",
-            "power": "Puissance",
-            "on": "Allumé",
-            "off": "Éteint"
-        },
-        german: {
-            "title": "Kein Gerät ausgewählt. Wählen Sie ein Gerät aus oder fügen Sie eines von oben hinzu.",
-            "yesterday-menu": "Gestern",
-            "today-menu": "Heute",
-            "tomorrow-menu": "Morgen",
-            "device-selection-text": "Gerät auswählen",
-            "add-device-text": "Gerät hinzufügen",
-            "device-name-label": "Benennen Sie Ihr Gerät",
-            "device-name-prefilled": "Küchenheizkörper",
-            "device-code-label": "Gerätecode:",
-            "cancel-device": "Abbrechen",
-            "submit-device": "Speichern",
-            "time": "Zeit",
-            "price": "Preis",
-            "power": "Leistung",
-            "on": "Ein",
-            "off": "Aus"
-        },
-        spanish: {
-            "title": "Ningún dispositivo está seleccionado. Selecciona o añade un dispositivo desde arriba.",
-            "yesterday-menu": "Ayer",
-            "today-menu": "Hoy",
-            "tomorrow-menu": "Mañana",
-            "device-selection-text": "Seleccionar dispositivo",
-            "add-device-text": "Añadir dispositivo",
-            "device-name-label": "Nombrar tu dispositivo",
-            "device-name-prefilled": "Radiador de cocina",
-            "device-code-label": "Código del dispositivo:",
-            "cancel-device": "Cancelar",
-            "submit-device": "Guardar",
-            "time": "Hora",
-            "price": "Precio",
-            "power": "Potencia",
-            "on": "Encendido",
-            "off": "Apagado"
         },
         french: {
             "title": "Aucun appareil n'est sélectionné. Sélectionnez ou ajoutez un appareil ci-dessus.",
@@ -1624,7 +1569,14 @@
 
                     document.getElementById("yesterday-data").innerHTML = generateTableHTML(yesterdayData, trigger, hours, calculateAverage(yesterdayData), onHoursAverageYesterday, timestamp);
                     document.getElementById("today-data").innerHTML = generateTableHTML(todayData, trigger, hours, calculateAverage(todayData), onHoursAverageToday, timestamp);
-                    document.getElementById("tomorrow-data").innerHTML = generateTableHTML(tomorrowData, trigger, hours, calculateAverage(tomorrowData), onHoursAverageTomorrow, timestamp);
+                    if (13 < today.getUTCHours()){
+                        document.getElementById("tomorrow-data").innerHTML = generateTableHTML(tomorrowData, trigger, hours, calculateAverage(tomorrowData), onHoursAverageTomorrow, timestamp);
+                    }
+                    else{
+                        document.getElementById("tomorrow-data").innerHTML = 'Prices have not updated yet.'
+                    }
+
+                    
 
                 }
             });
