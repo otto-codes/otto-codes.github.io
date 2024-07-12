@@ -1,0 +1,284 @@
+
+           body {
+              align-items: center;
+              background-color: #fff; /* Updated background color */
+              display: flex;
+              height: 100vh;
+              margin: 0;
+              font-family: sans-serif;
+            }
+
+            .form {
+              background-color: #231f20; /* Updated to match the main background */
+              box-sizing: border-box;
+              padding: 8vw;
+              width: 100%;
+              margin: auto;
+
+              flex-direction: column;
+              transition: all 0.3s;
+            }
+
+            .title, .subtitle {
+              color: #eee; /* You might want to adjust this if it's not clear enough */
+              font-family: sans-serif;
+              font-weight: 600;
+              margin-top: 1vw;
+              text-align: center;
+              font-size: 5vw;
+            }
+
+            .title {
+              font-size: 7vw;
+              margin-bottom: 20px;
+            }
+
+            .subtitle {
+              font-size: 45px;
+              margin-bottom: 10px;
+              margin-top: 50px;
+            }
+
+            .input-container {
+              height: 10vw;
+              margin-top: 7vw;
+              position: relative;
+              width: 100%;
+            }
+
+            .input {
+              background-color: #322f30; /* Slightly darker or the same as body for depth */
+              border-radius: 12px;
+              border: 0;
+              box-sizing: border-box;
+              color: white; /* Ensure text is visible against the dark background */
+              font-size: 40px;
+              height: 100%;
+              outline: 0;
+              padding: 0.8vw 4vw 0;
+              width: 100%;
+            }
+
+            .cut, .cut-short {
+              background-color: #231f20; /* Match the input fields */
+              border-radius: 10px;
+              height: 4vw;
+              left: 4vw;
+              position: absolute;
+              top: -4vw;
+              transform: translateY(0);
+              transition: transform 200ms;
+              width: 30vw;
+            }
+
+            .input:focus ~ .cut,
+            .input:not(:placeholder-shown) ~ .cut {
+              transform: translateY(1.6vw);
+            }
+
+            .placeholder {
+              color: white; /* This might remain the same for visibility */
+              font-family: sans-serif;
+              left: 4vw;
+              line-height: 2.8vw;
+              pointer-events: none;
+              position: absolute;
+              transform-origin: 0 50%;
+              transition: transform 200ms, color 200ms;
+              top: 4vw;
+              font-size: 40px;
+            }
+
+            .input:focus ~ .placeholder,
+            .input:not(:placeholder-shown) ~ .placeholder {
+              transform: translateY(-6vw) translateX(2vw) scale(0.75);
+            }
+
+            .submit {
+              background-color: #5db268; /* Updated to the lively green for contrast */
+              border-radius: 12px;
+              border: 0;
+              box-sizing: border-box;
+              color: #eee;
+              cursor: pointer;
+              font-size: 2.4vw;
+              height: 10vw;
+              margin-top: 6vw;
+              width: 100%;
+            }
+
+            .submit:active {
+              background-color: darken(#5db268, 10%); /* Slightly darker on click */
+            }
+
+            /* Increases the size of the checkbox */
+            input[type="checkbox"] {
+              transform: scale(4);
+              margin-right: 50px;
+            }
+
+            /* Increases the font size of the label */
+            .checkbox-label {
+              font-size: 2em; /* Adjust the size as needed */
+              color: white;
+            }
+
+            .checkbox-container {
+              margin-top: 6vw;
+            }
+
+            .wifistatus {
+              padding: 4px;
+            }
+
+            .wifistatus, .wifistatus:before {
+              display: inline-block;
+              border: 10px double transparent;
+              border-top-color: #5db268;
+              border-radius: 50%;
+            }
+
+            .wifistatus:before {
+              content: '';
+              width: 0; height: 0;
+            }
+
+            .button-container {
+              display: flex;
+              width: 100%;
+            }
+            button {
+              flex: 1; /* Makes each button take equal space */
+              font-size: 35px;
+              padding: 25px;
+              border: none;
+              color: white;
+              cursor: pointer;
+              outline: none;
+            }
+            .off, .auto, .on {
+              background-color: #322f30;
+            }
+            .active {
+              background-color: #5db268;;
+            }
+
+                 #pricetable {
+        text-align: center;
+    }
+
+    #date {
+        margin-top: 0vw;
+        overflow: hidden;
+        counter-reset: step;
+        list-style-type: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    #date li {
+        color: #E0E0E0; /* Light text color for better readability in dark mode */
+        font-size: 2.5vw;
+        width: 100%;
+        position: relative;
+        background: #333; /* Dark background for list items */
+        padding: 21px;
+    }
+
+    #date li:before {
+        content: var(--date);
+        height: 6vw;
+        line-height: 6vw;
+        display: block;
+        font-size: 5vw;
+        color: #E0E0E0; /* Light text color for better readability in dark mode */
+        background: #333; /* Dark background for list items */
+        border-radius: 5px;
+        margin: 0 auto 0vw auto;
+    }
+
+    #date li.active:before,
+    #date li.active {
+        background: #27AE60; /* A slightly lighter shade of green for active items */
+        color: white;
+    }
+    select#date-select {
+        font-size: 5vw;
+        text-align: center;
+        border-top-left-radius: 1vw;
+        border-top-right-radius: 1vw;
+        background: #5db268;
+        border: 0vw solid #333;
+        color: #ffffff;
+        margin-bottom: 0vw;
+        width: 100%;
+        padding: 1vw;
+    }
+
+    .prices-container table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 0vw;
+        text-align: center;
+        table-layout: fixed;
+    }
+
+    .prices-container th,
+    .prices-container td {
+        padding: 0.7vw;
+        border-bottom: 0.2vw solid #231f20; /* Darker border color */
+        text-align: center;
+    }
+
+    .prices-container th {
+        background-color: #322f30; /* Darker background for headers */
+        color: #E0E0E0; /* Light text color for better readability */
+        font-size: 40px;
+    }
+
+    .prices-container td {
+        background-color: #322f30; /* Even darker grey for alternate rows */
+        font-size: 3vw;
+        color: #E0E0E0; /* Light text color for better readability */
+    }
+
+    .prices-container tr:nth-child(odd) td {
+        background-color: #3c3839; 
+    }
+
+    .prices-container .power-on {
+        color: #27AE60; /* Light green for ON status */
+    }
+
+    .prices-container .power-off {
+        color: #E0E0E0; /* Light red for OFF status */
+    }
+
+            /* Large devices (desktops, 992px and up) */
+            @media (min-width: 992px) {
+              .form {
+                max-width: 60%; /* Adjust max width for larger screens */
+                padding: 3vw; /* Adjust padding for larger screens */
+                height: auto; /* Initial height adjusted to content */
+                border-radius: 20px;
+              }
+            }
+
+            /* Extra large devices (large desktops, 1500px and up) */
+            @media (min-width: 1500px) {
+              .form {
+                max-width: 55%; /* More appropriate max width for very large screens */
+                padding: 3vw;
+                height: auto;
+                border-radius: 20px;
+              }
+              .title {
+              font-size: 3vw; /* Dynamic font size */
+              }
+              .subtitle {
+              font-size: 1.5vw; /* Smaller font size for the subtitle */
+              margin-bottom: 0vw;
+              }
+            }
+  

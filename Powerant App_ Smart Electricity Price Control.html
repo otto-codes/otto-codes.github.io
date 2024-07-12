@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Powerant App: Smart Electricity Price Control</title>
+    <link rel="stylesheet" href="Powerant%20App_%20Smart%20Electricity%20Price%20Control_tiedostot/pico.jade.min.css">
+    <script type="text/javascript" src="Powerant%20App_%20Smart%20Electricity%20Price%20Control_tiedostot/van-1.5.0.nomodule.min.js"></script>
+    <style>
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .logo {
+            display: block;
+            margin: 0 auto;
+            max-width: 100px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <div id="app"><div><div><nav><ul><li><a href="#" class="active">Login</a></li><li><a href="#" class="">Sign-Up</a></li></ul></nav><div><form><img src="Powerant%20App_%20Smart%20Electricity%20Price%20Control_tiedostot/powerant-logo-small2.png" alt="PowerAnt Logo" class="logo"><h2>Login</h2><input type="email" placeholder="Email" required=""><input type="password" placeholder="Password" required=""><button type="submit">Login</button><p style="color: red;"></p></form></div></div></div></div>
+    </main>
+    <script>
+        const { div, form, input, button, h2, p, nav, ul, li, a, img, table, thead, tbody, tr, th, td, select, option, h3 } = van.tags;
+
+        const loginUser = async (email, password) => {
+            try {
+                const response = await fetch('https://api2.powerant.eu/api/collections/users/auth-with-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ identity: email, password: password })
+                });
+                if (!response.ok) throw new Error('Login failed');
+                const data = await response.json();
+                localStorage.setItem('jwt', data.token);
+                localStorage.setItem('userEmail', email);
+                return data.token;
+            } catch (error) {
+                throw new Error(error.message);
+            }
+        };
+
+        const parseJwt = (token) => {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                return JSON.parse(jsonPayload);
+            } catch (error) {
+                return null;
+            }
+        };
+
+        const checkJwt = async () => {
+            const token = localStorage.getItem('jwt');
+            if (!token) return false;
+
+            const decodedToken = parseJwt(token);
+            if (!decodedToken) return false;
+
+            const currentTime = Math.floor(Date.now() / 1000);
+            const tokenExpiryTime = decodedToken.exp;
+
+            // Refresh the token if it is about to expire in the next 5 minutes
+            if (tokenExpiryTime - currentTime < 300) {
+                try {
+                    const response = await fetch('https://api2.powerant.eu/api/collections/users/auth-refresh', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    if (!response.ok) throw new Error('Invalid token');
+                    const data = await response.json();
+                    localStorage.setItem('jwt', data.token);
+                    return data.token;
+                } catch (error) {
+                    return false;
+                }
+            }
+
+            return token;
+        };
+
+        const fetchDevices = async (token) => {
+            try {
+                const response = await fetch('https://api2.powerant.eu/api/collections/legacy_devices/records', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (!response.ok) throw new Error('Failed to fetch devices');
+                const data = await response.json();
+                return data.items || [];
+            } catch (error) {
+                console.error(error);
+                return [];
+            }
+        };
+
+        const fetchDeviceData = async (token, deviceId) => {
+            try {
+                const response = await fetch(`https://api2.powerant.eu/api/collections/legacy_devices/records/${deviceId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (!response.ok) throw new Error('Failed to fetch device data');
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error(error);
+                return null;
+            }
+        };
+
+        const LoginPage = (isLoggedIn, userEmail, devices) => {
+            const email = van.state('');
+            const password = van.state('');
+            const message = van.state('');
+
+            const login = async (e) => {
+                e.preventDefault();
+                try {
+                    const token = await loginUser(email.val, password.val);
+                    message.val = 'Login successful!';
+                    isLoggedIn.val = true;
+                    userEmail.val = email.val;
+                    devices.val = await fetchDevices(token);
+                } catch (error) {
+                    message.val = error.message;
+                }
+            };
+
+            return form({ onsubmit: login },
+                img({ src: 'powerant-logo-small2.png', alt: 'PowerAnt Logo', class: 'logo' }),
+                h2('Login'),
+                input({ type: 'email', placeholder: 'Email', value: email, oninput: e => email.val = e.target.value, required: true }),
+                input({ type: 'password', placeholder: 'Password', value: password, oninput: e => password.val = e.target.value, required: true }),
+                button({ type: 'submit' }, 'Login'),
+                p({ style: 'color: red;' }, message)
+            );
+        };
+
+        const SignupPage = (isLoggedIn, userEmail, devices) => {
+            const email = van.state('');
+            const password = van.state('');
+            const message = van.state('');
+
+            const signup = async (e) => {
+                e.preventDefault();
+                try {
+                    const response = await fetch('https://api2.powerant.eu/api/collections/users/records', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email: email.val, password: password.val, passwordConfirm: password.val })
+                    });
+                    const data = await response.json();
+                    if (!response.ok) {
+                        if (data?.data?.email?.message) {
+                            message.val = data.data.email.message;
+                        } else {
+                            throw new Error('Sign-up failed');
+                        }
+                    } else {
+                        message.val = 'Sign-up successful!';
+                        const token = await loginUser(email.val, password.val);
+                        isLoggedIn.val = true;
+                        userEmail.val = email.val;
+                        devices.val = await fetchDevices(token);
+                    }
+                } catch (error) {
+                    message.val = error.message;
+                }
+            };
+
+            return form({ onsubmit: signup },
+                img({ src: 'powerant-logo-small2.png', alt: 'PowerAnt Logo', class: 'logo' }),
+                h2('Sign-Up'),
+                input({ type: 'email', placeholder: 'Email', value: email, oninput: e => email.val = e.target.value, required: true }),
+                input({ type: 'password', placeholder: 'Password', value: password, oninput: e => password.val = e.target.value, required: true }),
+                button({ type: 'submit' }, 'Sign-Up'),
+                p({ style: 'color: red;' }, message)
+            );
+        };
+
+        const DevicesPage = (devices, selectedDevice, onDeviceSelect) => {
+            return div(
+                h2('Available Devices'),
+                select({ oninput: e => onDeviceSelect(e.target.value) },
+                    option({ value: '', disabled: true, selected: true }, 'Select your device'),
+                    devices.map(device =>
+                        option({ value: device.id }, device.device_name)
+                    )
+                ),
+                selectedDevice.val && DeviceData(selectedDevice.val)
+            );
+        };
+
+        const DeviceData = (deviceData) => {
+            return div(
+                h3(`Device Name: ${deviceData.device_name}`),
+                p(`Device ID: ${deviceData.id}`),
+                p(`Description: ${deviceData.description || 'N/A'}`),
+                p(`Device Action: ${deviceData.device_action}`),
+                p(`Price Trigger: ${deviceData.price_trigger}`),
+                p(`Cheapest Hours: ${deviceData.cheapest_hours}`)
+            );
+        };
+
+        const App = () => {
+            const showLogin = van.state(true);
+            const isLoggedIn = van.state(false);
+            const userEmail = van.state('');
+            const devices = van.state([]);
+            const selectedDevice = van.state(null);
+
+            const checkLoginStatus = async () => {
+                const token = await checkJwt();
+                if (token) {
+                    isLoggedIn.val = true;
+                    userEmail.val = localStorage.getItem('userEmail');
+                    devices.val = await fetchDevices(token);
+                }
+            };
+
+            const onDeviceSelect = async (deviceId) => {
+                const token = localStorage.getItem('jwt');
+                if (token) {
+                    selectedDevice.val = await fetchDeviceData(token, deviceId);
+                }
+            };
+
+            checkLoginStatus();
+
+            const switchToLogin = (e) => { e.preventDefault(); showLogin.val = true; };
+            const switchToSignup = (e) => { e.preventDefault(); showLogin.val = false; };
+
+            return div(
+                () => isLoggedIn.val
+                    ? div(
+                        h2(`Hello ${userEmail.val}!`),
+                        button({ onclick: () => { localStorage.clear(); window.location.reload(); } }, 'Logout'),
+                        DevicesPage(devices.val, selectedDevice, onDeviceSelect)
+                    )
+                    : div(
+                        nav(
+                            ul(
+                                li(a({ href: '#', onclick: switchToLogin, class: () => showLogin.val ? 'active' : '' }, 'Login')),
+                                li(a({ href: '#', onclick: switchToSignup, class: () => !showLogin.val ? 'active' : '' }, 'Sign-Up'))
+                            )
+                        ),
+                        div(
+                            () => showLogin.val ? LoginPage(isLoggedIn, userEmail, devices) : SignupPage(isLoggedIn, userEmail, devices)
+                        )
+                    )
+            );
+        };
+
+        van.add(document.getElementById('app'), App());
+    </script>
+
+
+</body></html>

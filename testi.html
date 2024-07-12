@@ -1,0 +1,15 @@
+<div style="display: flex; justify-content: space-between; align-items: center; background-color: #231f20; font-family: 'Arial', sans-serif;">
+    <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px;">
+            <span id="logged-in-as" style="font-size: 24px; color: #ffffff;">otto.miettinen@powerant.fi</span>    
+        <button id="logout-button" style="background-color: #5db268; width: 100%; font-size: 24px; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); transition: background-color 0.3s, box-shadow 0.3s;">Kirjaudu ulos</button>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px;">
+        <div style="display: flex; align-items: center;">
+            <div style="padding: 4px; position: relative; top: 12px; display: inline-block; border: 10px double transparent; border-top-color: #5db268; border-radius: 50%;">
+                <div style="height: 0; width: 0; border: 10px double transparent; border-top-color: #5db268; border-radius: 50%;"> </div>
+            </div>
+            <span style="font-size: 24px; color: #ffffff;">Tylypahka</span>
+        </div>
+        <button id="disconnect-button" onclick="confirmAndDisconnect()" style="background-color: #5db268; width: 100%; font-size: 24px; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); transition: background-color 0.3s, box-shadow 0.3s; position: relative; bottom: 10px;">Katkaise WiFi-yhteys</button>
+    </div>
+</div>
