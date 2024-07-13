@@ -48,6 +48,7 @@
             left: 20px;
             cursor: pointer;
             z-index: 1000;
+            display: none;
         }
         .hamburger span {
             display: block;
@@ -55,6 +56,14 @@
             height: 3px;
             background-color: #333;
             margin: 5px 0;
+        }
+        .close-sidebar {
+            cursor: pointer;
+            color: white;
+            font-size: 1.2em;
+            position: absolute;
+            top: 10px;
+            right: 10px;
         }
         .splash {
             position: absolute;
@@ -73,18 +82,25 @@
             opacity: 0;
             visibility: hidden;
         }
+        .back-button {
+            cursor: pointer;
+            color: #00af75;
+            text-decoration: underline;
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body>
-    <div id="hamburger" class="hamburger" onclick="toggleSidebar()" style="display: none;">
+    <div id="hamburger" class="hamburger" onclick="toggleSidebar()">
         <span></span>
         <span></span>
         <span></span>
     </div>
     <div id="sidebar" class="sidebar">
+        <span class="close-sidebar" onclick="toggleSidebar()">✖</span>
         <img src="powerant-logo-small2.png" alt="PowerAnt Logo" class="logo">
         <h2>Powerant</h2>
-        <p>Hello, <span id="sidebarUserEmail"></span>!</p>
+        <p>Hello, <span id="sidebarUsername"></span>!</p>
         <button onclick="logout()">Logout</button>
     </div>
     <main class="container">
@@ -95,7 +111,7 @@
         <div id="app"></div>
     </main>
     <script>
-        const { div, form, input, button, h2, p, nav, ul, li, a, img, select, option, h3, h1 } = van.tags;
+        const { div, form, input, button, h2, p, nav, ul, li, a, img, select, option, h3, h1, span } = van.tags;
 
         const loginUser = async (email, password) => {
             try {
@@ -110,6 +126,7 @@
                 const data = await response.json();
                 localStorage.setItem('jwt', data.token);
                 localStorage.setItem('userEmail', email);
+                localStorage.setItem('username', data.record.username); // Store username
                 return data.token;
             } catch (error) {
                 throw new Error(error.message);
@@ -205,7 +222,7 @@
             window.location.reload();
         };
 
-        const LoginPage = (isLoggedIn, userEmail, devices) => {
+        const LoginPage = (isLoggedIn, userEmail, username, devices) => {
             const email = van.state('');
             const password = van.state('');
             const message = van.state('');
@@ -217,9 +234,11 @@
                     message.val = 'Login successful!';
                     isLoggedIn.val = true;
                     userEmail.val = email.val;
+                    username.val = localStorage.getItem('username');
                     devices.val = await fetchDevices(token);
-                    document.getElementById('sidebarUserEmail').textContent = email.val;
-                    showSplashScreen(email.val);
+                    document.getElementById('sidebarUsername').textContent = username.val;
+                    showSplashScreen(username.val);
+                    document.getElementById('hamburger').style.display = 'block';
                 } catch (error) {
                     message.val = error.message;
                 }
@@ -235,7 +254,8 @@
             );
         };
 
-        const SignupPage = (isLoggedIn, userEmail, devices) => {
+        const SignupPage = (isLoggedIn, userEmail, username, devices) => {
+            const name = van.state('');
             const email = van.state('');
             const password = van.state('');
             const message = van.state('');
@@ -248,7 +268,7 @@
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ email: email.val, password: password.val, passwordConfirm: password.val })
+                        body: JSON.stringify({ username: name.val, email: email.val, password: password.val, passwordConfirm: password.val })
                     });
                     const data = await response.json();
                     if (!response.ok) {
@@ -262,9 +282,11 @@
                         const token = await loginUser(email.val, password.val);
                         isLoggedIn.val = true;
                         userEmail.val = email.val;
+                        username.val = name.val;
                         devices.val = await fetchDevices(token);
-                        document.getElementById('sidebarUserEmail').textContent = email.val;
-                        showSplashScreen(email.val);
+                        document.getElementById('sidebarUsername').textContent = name.val;
+                        showSplashScreen(name.val);
+                        document.getElementById('hamburger').style.display = 'block';
                     }
                 } catch (error) {
                     message.val = error.message;
@@ -274,6 +296,7 @@
             return form({ onsubmit: signup },
                 img({ src: 'powerant-logo-small2.png', alt: 'PowerAnt Logo', class: 'logo' }),
                 h2('Sign-Up'),
+                input({ type: 'text', placeholder: 'Name', value: name, oninput: e => name.val = e.target.value, required: true }),
                 input({ type: 'email', placeholder: 'Email', value: email, oninput: e => email.val = e.target.value, required: true }),
                 input({ type: 'password', placeholder: 'Password', value: password, oninput: e => password.val = e.target.value, required: true }),
                 button({ type: 'submit' }, 'Sign-Up'),
@@ -281,23 +304,22 @@
             );
         };
 
-        const DevicesPage = (devices, selectedDevice, onDeviceSelect) => {
+        const DevicesPage = (devices, onDeviceSelect) => {
             return div(
                 h2('My Devices'),
                 ul(
                     devices.map(device =>
                         li(a({ href: '#', onclick: e => { e.preventDefault(); onDeviceSelect(device.id); } }, device.device_name))
                     )
-                ),
-                selectedDevice.val && DeviceData(selectedDevice.val)
+                )
             );
         };
 
-        const DeviceData = (deviceData) => {
+        const DeviceData = (deviceData, onBack) => {
             return div(
-                h3(`Device Name: ${deviceData.device_name}`),
-                p(`Device ID: ${deviceData.id}`),
-                p(`Description: ${deviceData.description || 'N/A'}`),
+                div({ class: 'back-button', onclick: onBack }, 'Back'),
+                h3(deviceData.device_name),
+                p(`Country/Area: ${deviceData.country_area}`),
                 p(`Device Action: ${deviceData.device_action}`),
                 p(`Price Trigger: ${deviceData.price_trigger}`),
                 p(`Cheapest Hours: ${deviceData.cheapest_hours}`)
@@ -308,6 +330,7 @@
             const showLogin = van.state(true);
             const isLoggedIn = van.state(false);
             const userEmail = van.state('');
+            const username = van.state('');
             const devices = van.state([]);
             const selectedDevice = van.state(null);
 
@@ -316,9 +339,10 @@
                 if (token) {
                     isLoggedIn.val = true;
                     userEmail.val = localStorage.getItem('userEmail');
+                    username.val = localStorage.getItem('username');
                     devices.val = await fetchDevices(token);
-                    document.getElementById('sidebarUserEmail').textContent = localStorage.getItem('userEmail');
-                    showSplashScreen(localStorage.getItem('userEmail'));
+                    document.getElementById('sidebarUsername').textContent = localStorage.getItem('username');
+                    showSplashScreen(localStorage.getItem('username'));
                     document.getElementById('hamburger').style.display = 'block';
                 }
             };
@@ -330,6 +354,10 @@
                 }
             };
 
+            const onBack = () => {
+                selectedDevice.val = null;
+            };
+
             checkLoginStatus();
 
             const switchToLogin = (e) => { e.preventDefault(); showLogin.val = true; };
@@ -337,9 +365,9 @@
 
             return div(
                 () => isLoggedIn.val
-                    ? div(
-                        DevicesPage(devices.val, selectedDevice, onDeviceSelect)
-                    )
+                    ? selectedDevice.val
+                        ? DeviceData(selectedDevice.val, onBack)
+                        : DevicesPage(devices.val, onDeviceSelect)
                     : div(
                         nav(
                             ul(
@@ -348,14 +376,14 @@
                             )
                         ),
                         div(
-                            () => showLogin.val ? LoginPage(isLoggedIn, userEmail, devices) : SignupPage(isLoggedIn, userEmail, devices)
+                            () => showLogin.val ? LoginPage(isLoggedIn, userEmail, username, devices) : SignupPage(isLoggedIn, userEmail, username, devices)
                         )
                     )
             );
         };
 
-        const showSplashScreen = (email) => {
-            document.getElementById('welcomeMessage').textContent = `Welcome back ${email}`;
+        const showSplashScreen = (username) => {
+            document.getElementById('welcomeMessage').textContent = `Welcome back ${username}`;
             const splash = document.getElementById('splash');
             splash.classList.remove('hidden');
             setTimeout(() => {
