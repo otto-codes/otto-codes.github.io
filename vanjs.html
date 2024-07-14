@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -7,9 +7,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.jade.min.css">
     <link rel="stylesheet" href="additional.css">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.5.0.nomodule.min.js"></script>
-    <style>
-       
-    </style>
 </head>
 <body>
     <div id="hamburger" class="hamburger" onclick="toggleSidebar()">
@@ -33,6 +30,11 @@
     </main>
     <script>
         const { div, form, input, button, h2, p, nav, ul, li, a, img, select, option, h3, h1, span } = van.tags;
+
+        const deviceImages = {
+            'xe7fa5ii03fslmj': 'powerant-63A.png',
+            '4wlg4fe7371gi32': 'powerant-32A.png'
+        };
 
         const loginUser = async (email, password) => {
             try {
@@ -143,6 +145,11 @@
             window.location.reload();
         };
 
+        const isConnected = (lastUpdated) => {
+            const oneHourAgo = Date.now() - 3600 * 1000;
+            return new Date(lastUpdated).getTime() > oneHourAgo;
+        };
+
         const LoginPage = (isLoggedIn, userEmail, username, devices) => {
             const email = van.state('');
             const password = van.state('');
@@ -229,13 +236,18 @@
             return div(
                 h2({ style: 'text-align: center;' },'My Devices'),
                 div({ class: 'device-list' },
-                    devices.map(device =>
-                        div({ class: 'device-item', onclick: e => { e.preventDefault(); onDeviceSelect(device.id); } },
+                    devices.map(device => {
+                        const imageUrl = deviceImages[device.device_type] || 'default_image.png';
+                        const statusClass = isConnected(device.updated) ? ' connected' : ' disconnected';
+                        const statusText = isConnected(device.updated) ? ' Connected' : ' Disconnected';
+
+                        return div({ class: 'device-item', onclick: e => { e.preventDefault(); onDeviceSelect(device.id); } },
+                            img({ src: imageUrl, alt: device.device_name }),
                             h3(device.device_name),
-                            p(`Country/Area: ${device.country_area}`),
-                            p(`Action: ${device.device_action}`)
-                        )
-                    )
+                            div({ class: `status-indicator ${statusClass}` }),
+                            span({ class: 'status-text' }, statusText)
+                        );
+                    })
                 )
             );
         };
