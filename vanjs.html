@@ -191,15 +191,19 @@
 
         const createChart = (priceEntries, offset, deviceName) => {
             const ctx = document.getElementById('priceChart').getContext('2d');
-            const labels = priceEntries.map(entry => entry.timestamp.slice(-2));
-            const data = priceEntries.map(entry => entry.price + offset);
+            const labels = priceEntries.map((entry, index) => {
+                const startHour = index % 24;
+                const endHour = (startHour + 1) % 24;
+                return `${startHour.toString().padStart(2, '0')}-${endHour.toString().padStart(2, '0')}`;
+            });
+            const data = priceEntries.map(entry => entry.price);
             const backgroundColors = priceEntries.map(entry => entry.isOn ? 'green' : 'gray');
 
             const chartData = {
                 labels,
                 datasets: [
                     {
-                        label: 'Price (cents/kWh)',
+                        label: 'Electricity price',
                         data,
                         backgroundColor: backgroundColors
                     }
@@ -214,13 +218,13 @@
                     scales: {
                         x: {
                             title: {
-                                display: true,
-                                text: 'Hour'
+                                display: false,
+                                text: 'Time'
                             }
                         },
                         y: {
                             title: {
-                                display: true,
+                                display: false,
                                 text: 'Price (cents/kWh)'
                             }
                         }
@@ -353,12 +357,13 @@
             return div(
                 div({ class: 'back-button', onclick: onBack }, 'Back'),
                 h3(deviceData.device_name),
+
+                div({ class: 'chart-container' },
+                    canvas({ id: 'priceChart', width: '600', height: '400' }),
                 p(`Country/Area: ${deviceData.country_area}`),
                 p(`Device Action: ${deviceData.device_action}`),
                 p(`Price Trigger: ${deviceData.price_trigger}`),
-                p(`Cheapest Hours: ${deviceData.cheapest_hours}`),
-                div({ class: 'chart-container' },
-                    canvas({ id: 'priceChart', width: '400', height: '400' })
+                p(`Cheapest Hours: ${deviceData.cheapest_hours}`)
                 )
             );
         };
