@@ -8,6 +8,7 @@
             align-items: center;
             height: 100vh;
             position: relative;
+            padding-top: 50px;
         }
         .logo {
             display: block;
@@ -79,6 +80,7 @@
             color: #00af75;
             text-decoration: underline;
             margin-right: 10px;
+           
         }
         .white {
             color: #fff;

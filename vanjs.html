@@ -8,6 +8,29 @@
     <link rel="stylesheet" href="additional.css">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.5.0.nomodule.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .container {
+            margin-top: 50px;
+        }
+        .chart-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        #hamburger {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+        .hamburger span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background-color: var(--pico-color);
+            margin: 5px 0;
+        }
+    </style>
 </head>
 <body>
     <div id="hamburger" class="hamburger" onclick="toggleSidebar()">
@@ -30,7 +53,7 @@
         <div id="app"></div>
     </main>
     <script>
-        const { div, form, input, button, h2, p, nav, ul, li, a, img, select, option, h3, h1, span, canvas, label } = van.tags;
+        const { div, form, input, button, h2, p, nav, ul, li, a, img, select, option, h3, h1, span, canvas, label, br } = van.tags;
 
         const deviceImages = {
             'xe7fa5ii03fslmj': 'powerant-63A.png',
@@ -366,6 +389,8 @@
 
         const DeviceData = (deviceData, onBack) => {
             const priceData = van.state(null);
+            const cheapestHours = van.state(deviceData.cheapest_hours);
+            const priceTrigger = van.state(deviceData.price_trigger);
 
             const fetchAndDisplayPriceData = async () => {
                 const data = await fetchPriceData(deviceData.country_area);
@@ -374,7 +399,7 @@
                     const offset = data.offset_hour || 0;
                     const today = new Date().toISOString().slice(0, 10).replace(/-/g, '');
                     const todayPrices = Object.fromEntries(Object.entries(data).filter(([key, value]) => key.startsWith(today)));
-                    const priceEntries = calculateDeviceStatus(todayPrices, deviceData.cheapest_hours, deviceData.price_trigger, deviceData.device_action);
+                    const priceEntries = calculateDeviceStatus(todayPrices, cheapestHours.val, priceTrigger.val, deviceData.device_action);
                     createChart(priceEntries, offset, deviceData.device_name);
                 }
             };
@@ -393,31 +418,46 @@
                 }
             };
 
-            const handleInputChange = async (e) => {
-                await handleUpdateDevice(e);
+            const handleInputChange = (e) => {
+                const { name, value } = e.target;
+                if (name === 'cheapest_hours') {
+                    cheapestHours.val = value;
+                } else if (name === 'price_trigger') {
+                    priceTrigger.val = value;
+                }
             };
 
             fetchAndDisplayPriceData();
 
             return div(
                 div({ class: 'back-button', onclick: onBack }, 'Back'),
-                h3(deviceData.device_name),
+                h3({ style: 'text-align: center;' }, deviceData.device_name),
                 div({ class: 'chart-container' },
                     canvas({ id: 'priceChart', width: '400', height: '400' })
                 ),
-                form({ oninput: handleInputChange },
-                    label(`Cheapest Hours (${deviceData.cheapest_hours})`),
-                    input({ type: 'range', name: 'cheapest_hours', min: '0', max: '24', value: deviceData.cheapest_hours, oninput: (e) => e.target.nextSibling.textContent = `Cheapest Hours (${e.target.value})` }),
-                    label(`Price Trigger (${deviceData.price_trigger})`),
-                    input({ type: 'range', name: 'price_trigger', min: '-100', max: '100', value: deviceData.price_trigger, oninput: (e) => e.target.nextSibling.textContent = `Price Trigger (${e.target.value})` }),
-                    label('Disable Price Trigger'),
+                form({ oninput: handleInputChange, onmouseup: handleUpdateDevice },
+                    br(),
+                    label(`Cheapest Hours (${cheapestHours})`),
+                    input({ type: 'range', name: 'cheapest_hours', min: '0', max: '24', value: deviceData.cheapest_hours, oninput: (e) => cheapestHours.val = e.target.value }),
+                    br(),
+                    br(),
+                    label(`Price Trigger (${priceTrigger})`),
+                    input({ type: 'range', name: 'price_trigger', min: '-100', max: '100', value: deviceData.price_trigger, oninput: (e) => priceTrigger.val = e.target.value }),
+                    br(),
+                    br(),
                     input({ type: 'checkbox', name: 'price_trigger_disabled', role: 'switch', checked: deviceData.price_trigger === '' }),
+                    br(),
+                    label('Disable Price Trigger'),
+                    br(),
+                    br(),
                     label('Country/Area'),
                     select({ name: 'country_area' },
                         option({ value: 'finland-fi1', selected: deviceData.country_area === 'finland-fi1' }, 'Finland'),
                         option({ value: 'sweden-se1', selected: deviceData.country_area === 'sweden-se1' }, 'Sweden SE1'),
                         option({ value: 'norway-no1', selected: deviceData.country_area === 'norway-no1' }, 'Norway NO1')
                     ),
+                    br(),
+                    br(),
                     label('Device Action'),
                     select({ name: 'device_action' },
                         option({ value: 'On', selected: deviceData.device_action === 'On' }, 'On'),
