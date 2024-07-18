@@ -3,7 +3,7 @@
             --pico-color: var(--pico-color, #f8f9fa);
         }
         .container {
-            display: flex;
+
             justify-content: center;
             align-items: center;
             height: 100vh;

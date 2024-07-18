@@ -30,12 +30,14 @@
         <div id="app"></div>
     </main>
     <script>
-        const { div, form, input, button, h2, p, nav, ul, li, a, img, select, option, h3, h1, span, canvas } = van.tags;
+        const { div, form, input, button, h2, p, nav, ul, li, a, img, select, option, h3, h1, span, canvas, label } = van.tags;
 
         const deviceImages = {
             'xe7fa5ii03fslmj': 'powerant-63A.png',
             '4wlg4fe7371gi32': 'powerant-32A.png'
         };
+
+        let chartInstance = null;
 
         const loginUser = async (email, password) => {
             try {
@@ -149,6 +151,26 @@
             }
         };
 
+        const updateDeviceData = async (deviceId, updateData) => {
+            const token = localStorage.getItem('jwt');
+            try {
+                const response = await fetch(`https://api2.powerant.eu/api/collections/legacy_devices/records/${deviceId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updateData)
+                });
+                if (!response.ok) throw new Error('Failed to update device data');
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error(error);
+                return null;
+            }
+        };
+
         const toggleSidebar = () => {
             document.getElementById('sidebar').classList.toggle('open');
         };
@@ -175,7 +197,7 @@
             } else if (deviceAction === 'Off') {
                 priceEntries.forEach(entry => entry.isOn = false);
             } else if (deviceAction === 'Automatic') {
-                if (priceTrigger !== null) {
+                if (priceTrigger !== null && priceTrigger !== '') {
                     priceEntries.forEach(entry => {
                         if (entry.price <= priceTrigger) entry.isOn = true;
                     });
@@ -191,6 +213,11 @@
 
         const createChart = (priceEntries, offset, deviceName) => {
             const ctx = document.getElementById('priceChart').getContext('2d');
+
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
             const labels = priceEntries.map((entry, index) => {
                 const startHour = index % 24;
                 const endHour = (startHour + 1) % 24;
@@ -232,7 +259,7 @@
                 }
             };
 
-            new Chart(ctx, config);
+            chartInstance = new Chart(ctx, config);
         };
 
         const LoginPage = (isLoggedIn, userEmail, username, devices) => {
@@ -319,7 +346,7 @@
 
         const DevicesPage = (devices, onDeviceSelect) => {
             return div(
-                h2({ style: 'text-align: center;' },'My Devices'),
+                h2({ style: 'text-align: center;' }, 'My Devices'),
                 div({ class: 'device-list' },
                     devices.map(device => {
                         const imageUrl = deviceImages[device.device_type] || 'default_image.png';
@@ -352,18 +379,51 @@
                 }
             };
 
+            const handleUpdateDevice = async (e) => {
+                const updateData = {
+                    cheapest_hours: e.currentTarget.cheapest_hours.value,
+                    price_trigger: e.currentTarget.price_trigger_disabled.checked ? '' : e.currentTarget.price_trigger.value,
+                    country_area: e.currentTarget.country_area.value,
+                    device_action: e.currentTarget.device_action.value
+                };
+                const updatedDevice = await updateDeviceData(deviceData.id, updateData);
+                if (updatedDevice) {
+                    deviceData = updatedDevice;
+                    fetchAndDisplayPriceData();
+                }
+            };
+
+            const handleInputChange = async (e) => {
+                await handleUpdateDevice(e);
+            };
+
             fetchAndDisplayPriceData();
 
             return div(
                 div({ class: 'back-button', onclick: onBack }, 'Back'),
                 h3(deviceData.device_name),
-
                 div({ class: 'chart-container' },
-                    canvas({ id: 'priceChart', width: '400', height: '400' }),
-                p(`Country/Area: ${deviceData.country_area}`),
-                p(`Device Action: ${deviceData.device_action}`),
-                p(`Price Trigger: ${deviceData.price_trigger}`),
-                p(`Cheapest Hours: ${deviceData.cheapest_hours}`)
+                    canvas({ id: 'priceChart', width: '400', height: '400' })
+                ),
+                form({ oninput: handleInputChange },
+                    label(`Cheapest Hours (${deviceData.cheapest_hours})`),
+                    input({ type: 'range', name: 'cheapest_hours', min: '0', max: '24', value: deviceData.cheapest_hours, oninput: (e) => e.target.nextSibling.textContent = `Cheapest Hours (${e.target.value})` }),
+                    label(`Price Trigger (${deviceData.price_trigger})`),
+                    input({ type: 'range', name: 'price_trigger', min: '-100', max: '100', value: deviceData.price_trigger, oninput: (e) => e.target.nextSibling.textContent = `Price Trigger (${e.target.value})` }),
+                    label('Disable Price Trigger'),
+                    input({ type: 'checkbox', name: 'price_trigger_disabled', role: 'switch', checked: deviceData.price_trigger === '' }),
+                    label('Country/Area'),
+                    select({ name: 'country_area' },
+                        option({ value: 'finland-fi1', selected: deviceData.country_area === 'finland-fi1' }, 'Finland'),
+                        option({ value: 'sweden-se1', selected: deviceData.country_area === 'sweden-se1' }, 'Sweden SE1'),
+                        option({ value: 'norway-no1', selected: deviceData.country_area === 'norway-no1' }, 'Norway NO1')
+                    ),
+                    label('Device Action'),
+                    select({ name: 'device_action' },
+                        option({ value: 'On', selected: deviceData.device_action === 'On' }, 'On'),
+                        option({ value: 'Off', selected: deviceData.device_action === 'Off' }, 'Off'),
+                        option({ value: 'Automatic', selected: deviceData.device_action === 'Automatic' }, 'Automatic')
+                    )
                 )
             );
         };
@@ -437,3 +497,4 @@
     </script>
 </body>
 </html>
+
