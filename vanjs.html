@@ -30,6 +30,9 @@
             background-color: var(--pico-color);
             margin: 5px 0;
         }
+        .green-text {
+            color: #00af75; /* Green color used in the app */
+        }
     </style>
 </head>
 <body>
@@ -389,8 +392,6 @@
 
         const DeviceData = (deviceData, onBack) => {
             const priceData = van.state(null);
-            const cheapestHours = van.state(deviceData.cheapest_hours);
-            const priceTrigger = van.state(deviceData.price_trigger);
 
             const fetchAndDisplayPriceData = async () => {
                 const data = await fetchPriceData(deviceData.country_area);
@@ -399,7 +400,7 @@
                     const offset = data.offset_hour || 0;
                     const today = new Date().toISOString().slice(0, 10).replace(/-/g, '');
                     const todayPrices = Object.fromEntries(Object.entries(data).filter(([key, value]) => key.startsWith(today)));
-                    const priceEntries = calculateDeviceStatus(todayPrices, cheapestHours.val, priceTrigger.val, deviceData.device_action);
+                    const priceEntries = calculateDeviceStatus(todayPrices, deviceData.cheapest_hours, deviceData.price_trigger, deviceData.device_action);
                     createChart(priceEntries, offset, deviceData.device_name);
                 }
             };
@@ -407,7 +408,7 @@
             const handleUpdateDevice = async (e) => {
                 const updateData = {
                     cheapest_hours: e.currentTarget.cheapest_hours.value,
-                    price_trigger: e.currentTarget.price_trigger_disabled.checked ? '' : e.currentTarget.price_trigger.value,
+                    price_trigger: e.currentTarget.price_trigger.value,
                     country_area: e.currentTarget.country_area.value,
                     device_action: e.currentTarget.device_action.value
                 };
@@ -418,13 +419,13 @@
                 }
             };
 
-            const handleInputChange = (e) => {
-                const { name, value } = e.target;
-                if (name === 'cheapest_hours') {
-                    cheapestHours.val = value;
-                } else if (name === 'price_trigger') {
-                    priceTrigger.val = value;
-                }
+            const handleInputChange = async (e) => {
+                document.getElementById('cheapestHoursLabel').textContent = `Cheapest Hours: ${e.currentTarget.cheapest_hours.value}`;
+                document.getElementById('priceTriggerLabel').textContent = `Price Trigger: ${e.currentTarget.price_trigger.value}`;
+            };
+
+            const handleSliderChange = async (e) => {
+                await handleUpdateDevice(e);
             };
 
             fetchAndDisplayPriceData();
@@ -435,20 +436,13 @@
                 div({ class: 'chart-container' },
                     canvas({ id: 'priceChart', width: '400', height: '400' })
                 ),
-                form({ oninput: handleInputChange, onmouseup: handleUpdateDevice },
+                form({ oninput: handleInputChange, onmouseup: handleSliderChange },
                     br(),
-                    label(`Cheapest Hours (${cheapestHours})`),
-                    input({ type: 'range', name: 'cheapest_hours', min: '0', max: '24', value: deviceData.cheapest_hours, oninput: (e) => cheapestHours.val = e.target.value }),
+                    label({ id: 'cheapestHoursLabel', class: 'green-text' }, `Cheapest Hours: ${deviceData.cheapest_hours}`),
+                    input({ type: 'range', name: 'cheapest_hours', min: '0', max: '24', value: deviceData.cheapest_hours }),
                     br(),
-                    br(),
-                    label(`Price Trigger (${priceTrigger})`),
-                    input({ type: 'range', name: 'price_trigger', min: '-100', max: '100', value: deviceData.price_trigger, oninput: (e) => priceTrigger.val = e.target.value }),
-                    br(),
-                    br(),
-                    input({ type: 'checkbox', name: 'price_trigger_disabled', role: 'switch', checked: deviceData.price_trigger === '' }),
-                    br(),
-                    label('Disable Price Trigger'),
-                    br(),
+                    label({ id: 'priceTriggerLabel', class: 'green-text' }, `Price Trigger: ${deviceData.price_trigger}`),
+                    input({ type: 'range', name: 'price_trigger', min: '-100', max: '100', value: deviceData.price_trigger }),
                     br(),
                     label('Country/Area'),
                     select({ name: 'country_area' },
@@ -456,7 +450,6 @@
                         option({ value: 'sweden-se1', selected: deviceData.country_area === 'sweden-se1' }, 'Sweden SE1'),
                         option({ value: 'norway-no1', selected: deviceData.country_area === 'norway-no1' }, 'Norway NO1')
                     ),
-                    br(),
                     br(),
                     label('Device Action'),
                     select({ name: 'device_action' },
@@ -537,4 +530,5 @@
     </script>
 </body>
 </html>
+
 
