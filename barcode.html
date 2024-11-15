@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barcode Scanner</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+    <style>
+        #camera {
+            width: 100%;
+            max-width: 600px;
+            margin: auto;
+        }
+        #result {
+            font-size: 1.5em;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Barcode Scanner</h1>
+    <div id="camera"></div>
+    <div id="result">Scanned Barcode: <span id="barcode"></span></div>
+
+    <script>
+        // Initialize Quagga
+        function startScanner() {
+            Quagga.init({
+                inputStream: {
+                    name: "Live",
+                    type: "LiveStream",
+                    target: document.querySelector('#camera'),
+                    constraints: {
+                        facingMode: "environment" // Use the back camera
+                    }
+                },
+                decoder: {
+                    readers: ["code_128_reader", "ean_reader", "ean_8_reader", "upc_reader", "upc_e_reader"]
+                }
+            }, function(err) {
+                if (err) {
+                    console.error(err);
+                    return;
+                }
+                Quagga.start();
+            });
+
+            // Listen for barcode detection
+            Quagga.onDetected(function(result) {
+                const barcode = result.codeResult.code;
+                document.getElementById('barcode').innerText = barcode;
+                Quagga.stop(); // Stop the scanner after a successful scan
+            });
+        }
+
+        // Start the scanner on page load
+        window.addEventListener('load', startScanner);
+    </script>
+
+</body>
+</html>
