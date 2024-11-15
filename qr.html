@@ -6,20 +6,15 @@
     <title>QR Code Scanner</title>
     <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
     <style>
-        #camera {
+        #reader {
             width: 100%;
-            max-width: 300px;
+            max-width: 500px;
             margin: auto;
         }
         #result {
-            font-size: 1.5em;
-            margin-top: 20px;
+            font-size: 1.2em;
             text-align: center;
-        }
-        #reader {
-            width: 100%;
-            max-width: 600px;
-            margin: auto;
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -27,27 +22,36 @@
 
     <h1>QR Code Scanner</h1>
     <div id="reader"></div>
-    <div id="result">Scanned QR Code: <span id="qr-code"></span></div>
+    <div id="result">Scanned QR Code: <span id="qr-code-result"></span></div>
 
     <script>
+        // Callback for successful QR code scan
         function onScanSuccess(decodedText, decodedResult) {
-            // Display the decoded text
-            document.getElementById('qr-code').innerText = decodedText;
-            // Stop the scanner after a successful scan
-            html5QrcodeScanner.clear();
+            // Display the scanned QR code text
+            document.getElementById('qr-code-result').innerText = decodedText;
+            // Stop the scanner after successful scan
+            qrCodeScanner.stop().then(() => {
+                console.log("QR code scanner stopped.");
+            }).catch((err) => {
+                console.error("Error stopping scanner: ", err);
+            });
         }
 
-        function onScanFailure(error) {
-            // Handle scan failure (optional)
-            console.warn(`QR code scan error: ${error}`);
-        }
+        // Initialize the QR code scanner
+        const qrCodeScanner = new Html5Qrcode("reader");
 
-        // Start the QR code scanner
-        const html5QrcodeScanner = new Html5QrcodeScanner(
-            "reader",
-            { fps: 10, qrbox: 250 }
-        );
-        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+        // Start the scanner
+        qrCodeScanner.start(
+            { facingMode: "environment" }, // Use back camera
+            {
+                fps: 10,
+                qrbox: 250
+            },
+            onScanSuccess
+        ).catch((err) => {
+            console.error("Failed to start QR code scanner: ", err);
+            alert("Camera access failed or not supported. Please try a different browser.");
+        });
     </script>
 
 </body>
